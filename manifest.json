@@ -1,0 +1,22 @@
+{
+  "name": "Recovery Calendar",
+  "short_name": "Recovery",
+  "description": "Find and track recovery meetings in your community",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#EAE4DD",
+  "theme_color": "#313131",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

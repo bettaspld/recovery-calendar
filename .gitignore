@@ -1,0 +1,4 @@
+meeting-aggregator/
+.DS_Store
+*.bak
+.env
