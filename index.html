@@ -2371,6 +2371,67 @@
     white-space: nowrap;
   }
   .flm-add-btn:hover { background: var(--accent-dark); }
+  .flm-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .flm-card-header .flm-card-name {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 0;
+  }
+  .flm-mode-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .flm-badge-inperson {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  .flm-badge-virtual {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  .flm-badge-hybrid {
+    background: #fff3e0;
+    color: #e65100;
+  }
+  .flm-card-virtual {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    background: #e3f2fd;
+    border-radius: 6px;
+  }
+  .flm-virtual-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #1565c0;
+    text-decoration: none;
+  }
+  .flm-virtual-link:hover {
+    text-decoration: underline;
+  }
+  .flm-virtual-details {
+    font-size: 9px;
+    color: #546e7a;
+    padding-left: 17px;
+  }
   .flm-find-btn {
     display: inline-flex;
     align-items: center;
@@ -6379,6 +6440,21 @@
       <button onclick="closeDocs()" style="padding:8px 16px;border-radius:6px;background:var(--accent);color:var(--white);border:none;font-family:inherit;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Back to App</button>
     </div>
 
+    <!-- QUICK LINKS -->
+    <div style="margin-bottom:32px;background:var(--grid-line);border-radius:8px;padding:16px;">
+      <h2 style="font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px;">Quick Links — All Services</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+        <a href="https://app.netlify.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#9729; Netlify Dashboard &#8599;</a>
+        <a href="https://console.neon.tech" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128024; Neon Database &#8599;</a>
+        <a href="https://console.firebase.google.com/project/recovery-calendar-14708" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128293; Firebase Console &#8599;</a>
+        <a href="https://dashboard.emailjs.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#9993; EmailJS Dashboard &#8599;</a>
+        <a href="https://github.com/bettaspld/recovery-calendar" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128025; PWA Repo &#8599;</a>
+        <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128025; Aggregator Repo &#8599;</a>
+        <a href="https://meeting-aggregator.netlify.app" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128269; Live Aggregator API &#8599;</a>
+        <a href="https://platform.openai.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#129302; OpenAI Platform &#8599;</a>
+      </div>
+    </div>
+
     <!-- OVERVIEW -->
     <div style="margin-bottom:32px;">
       <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 12px;">Overview</h2>
@@ -6407,10 +6483,12 @@
   |     +-- parse-schedule.js (schedule parser)
   |     +-- chat.js (AI chat helper)
   |
-  +-- Meeting Aggregator API
-        +-- /api/search (ZIP code search)
-        +-- Neon Postgres (cloud database)
-        +-- BMLT + AA intergroup feeds</div>
+  +-- Meeting Aggregator API (meeting-aggregator.netlify.app)
+        +-- /api/search (ZIP + radius + filters)
+        +-- /api/admin/crawl (trigger data refresh)
+        +-- Neon Postgres (56,000+ meetings)
+        +-- BMLT feeds (NA — 51 state queries)
+        +-- 95 AA intergroup feeds (~40 states)</div>
     </div>
 
     <!-- HOSTING & DEPLOYMENT -->
@@ -6522,7 +6600,7 @@
           <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">Cloud PostgreSQL</span>
         </div>
         <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
-          Serverless Postgres database that stores all crawled meeting data (20,000+ meetings across the US), ZIP code lookup tables, crawl job history, and source configurations. Free tier.
+          Serverless Postgres database that stores all crawled meeting data (56,000+ meetings across the US), ZIP code lookup tables, crawl job history, and source configurations. Free tier.
         </p>
         <div style="font-size:11px;">
           <a href="https://console.neon.tech" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Neon Console &#8599;</a>
@@ -6540,7 +6618,7 @@
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
           <span style="font-size:16px;">&#127760;</span>
           <strong style="font-size:13px;font-weight:800;">BMLT (Narcotics Anonymous)</strong>
-          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">~20,000 meetings</span>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">~23,000 meetings</span>
         </div>
         <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
           The Basic Meeting List Toolbox is the standard API for NA meetings worldwide. The aggregator queries the "Tomato" server (a global aggregator) once per US state to get complete national coverage. Returns structured JSON with meeting names, times, locations, and coordinates.
@@ -6559,10 +6637,10 @@
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
           <span style="font-size:16px;">&#9651;</span>
           <strong style="font-size:13px;font-weight:800;">Meeting Guide API (Alcoholics Anonymous)</strong>
-          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">~4,000 meetings</span>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">~33,000 meetings</span>
         </div>
         <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
-          AA has no single national feed. Each intergroup runs a WordPress site with the "12 Step Meeting List" plugin, which exposes a JSON API. The aggregator currently pulls from 9 intergroup feeds covering: Madison WI, Northern WI, Chicago, Minneapolis, Portland, Boulder, Durham NC, Cape Atlantic NJ, and North San Diego.
+          AA has no single national feed. Each intergroup runs a WordPress site with the "12 Step Meeting List" (TSML) plugin, which exposes a JSON API. The aggregator pulls from 95 intergroup feeds covering approximately 40 US states, providing near-national AA coverage.
         </p>
         <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
           <strong>Parser:</strong> <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">meeting_guide</code><br>
@@ -6648,11 +6726,14 @@
           <strong style="font-size:13px;font-weight:800;">Refreshing Meeting Data</strong>
         </div>
         <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
-          A weekly scheduled task in Claude automatically re-crawls all sources every Sunday at 6am. To manually trigger a refresh:
+          To manually trigger a refresh (the .env file already contains the Neon DATABASE_URL):
         </p>
         <div style="font-size:12px;line-height:1.8;color:var(--ink);">
           <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">cd ~/Claude\ Projects/Recovery\ Calendar/meeting-aggregator</code><br>
-          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:10px;display:inline-block;margin:4px 0;word-break:break-all;">DATABASE_URL="postgresql://neondb_owner:npg_3YocUdrVbEe2@ep-gentle-cherry-a4vmw4s8-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require" npm run crawl</code>
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">npm run dev</code><br>
+          <span style="color:var(--ink-faint);">Then in a separate terminal tab (Cmd+T):</span><br>
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">curl -X POST http://localhost:3000/api/admin/crawl -H "Content-Type: application/json" -d '{"deduplicate":false}'</code><br>
+          <span style="color:var(--ink-faint);">The crawl takes 15-30 minutes to process all 95+ feeds.</span>
         </div>
       </div>
 
@@ -6669,6 +6750,87 @@
           2. Test if their feed works: visit <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">[site]/wp-admin/admin-ajax.php?action=meetings</code><br>
           3. If it returns JSON, add the source to <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">prisma/seed.ts</code><br>
           4. Run <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">npm run db:seed</code> then <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">npm run crawl</code> (with DATABASE_URL for cloud)
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH API -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Search API Reference</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#128269;</span>
+          <strong style="font-size:13px;font-weight:800;">POST /api/search</strong>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          The main search endpoint. Accepts JSON body with these parameters:
+        </p>
+        <div style="font-size:11px;line-height:2.0;color:var(--ink);font-family:monospace;background:var(--grid-line);border-radius:6px;padding:12px;">
+          zipCode: string ......... 5-digit US ZIP code<br>
+          radiusKm: number ........ Search radius in km (default: 16)<br>
+          limit: number ........... Max results (default: 200)<br>
+          program: string[] ....... ["AA", "NA", "SMART", "Al-Anon"]<br>
+          day: number[] ........... [0=Sun, 1=Mon, ... 6=Sat]<br>
+          format: string[] ........ ["Discussion", "Speaker", etc.]<br>
+          access: string .......... "Open" or "Closed"<br>
+          attendanceMode: string .. "In-Person", "Virtual", "Hybrid"<br>
+          textSearch: string ...... Search meeting names<br>
+          city: string ............ Filter by city name<br>
+          state: string ........... Filter by 2-letter state code
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:10px 0 0;">
+          <strong>Response includes:</strong> meetingName, program, dayOfWeek, startTime, endTime, format, access, attendanceMode, locationName, street, city, state, zip, lat, lng, virtualUrl, virtualMeetingId, virtualPassword, confidenceScore, distanceKm, distanceMiles
+        </p>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#127760;</span>
+          <strong style="font-size:13px;font-weight:800;">Meeting Attendance Modes</strong>
+        </div>
+        <div style="font-size:12px;line-height:1.8;color:var(--ink);">
+          <strong style="color:#2e7d32;">In-Person</strong> — Physical meeting at a location with street address<br>
+          <strong style="color:#1565c0;">Virtual</strong> — Online meeting via Zoom, Google Meet, etc. Includes virtualUrl, virtualMeetingId, and virtualPassword when available<br>
+          <strong style="color:#e65100;">Hybrid</strong> — Both in-person and virtual options available
+        </div>
+        <p style="font-size:11px;line-height:1.7;color:var(--ink-faint);margin:8px 0 0;">
+          Virtual/Hybrid meetings without coordinates are included in radius searches without distance filtering, so they always appear in results regardless of location.
+        </p>
+      </div>
+    </div>
+
+    <!-- ENVIRONMENT VARIABLES -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Environment Variables</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#128272;</span>
+          <strong style="font-size:13px;font-weight:800;">Meeting Aggregator (.env)</strong>
+        </div>
+        <div style="font-size:11px;line-height:2.0;color:var(--ink);font-family:monospace;background:var(--grid-line);border-radius:6px;padding:12px;">
+          DATABASE_URL ............ Neon Postgres connection string<br>
+          <span style="color:var(--ink-faint);">(Set in both local .env AND Netlify env vars)</span>
+        </div>
+        <p style="font-size:11px;line-height:1.7;color:var(--ink-faint);margin:8px 0 0;">
+          IMPORTANT: The local .env and Netlify must use the SAME Neon DATABASE_URL. If they differ, local crawls won't appear on the deployed site.
+        </p>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#128272;</span>
+          <strong style="font-size:13px;font-weight:800;">Netlify Environment Variables</strong>
+        </div>
+        <div style="font-size:11px;line-height:2.0;color:var(--ink);font-family:monospace;background:var(--grid-line);border-radius:6px;padding:12px;">
+          DATABASE_URL ............ Neon Postgres (meeting-aggregator)<br>
+          OPENAI_API_KEY .......... OpenAI key (chat + parse functions)<br>
+        </div>
+        <div style="font-size:11px;margin-top:8px;">
+          <a href="https://app.netlify.com/sites/recovery-calendar/settings/env" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">PWA Env Vars &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://app.netlify.com/sites/meeting-aggregator/settings/env" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Aggregator Env Vars &#8599;</a>
         </div>
       </div>
     </div>
@@ -7017,6 +7179,15 @@
             <option value="">Open & Closed</option>
             <option value="Anyone Welcome">Anyone Welcome (Open)</option>
             <option value="Members Only">Members Only (Closed)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Meeting Mode</label>
+          <select id="flmMode" style="width:100%;padding:10px 12px;border:1.5px solid var(--grid-line);border-radius:var(--radius);font-family:inherit;font-size:12px;background:var(--white);color:var(--ink);">
+            <option value="">All (In-Person & Virtual)</option>
+            <option value="In-Person">In-Person Only</option>
+            <option value="Virtual">Virtual Only</option>
+            <option value="Hybrid">Hybrid Only</option>
           </select>
         </div>
         <button class="btn btn-primary" id="flmSearchBtn" onclick="findLocalMeetingsSearch()" style="width:100%;">
@@ -7444,7 +7615,7 @@ function adminClearLocalStorage() {
 function adminShowDocs() {
   closeAdminPanel();
   document.getElementById('appContent').style.display = 'none';
-  document.getElementById('docsPage').style.display = '';
+  document.getElementById('docsPage').style.display = 'block';
   window.scrollTo(0, 0);
 }
 
@@ -9657,7 +9828,11 @@ async function findLocalMeetingsSearch() {
               address: [m.street, m.city, m.state, m.zip].filter(Boolean).join(', '),
               notes: [m.notes, m.distanceMiles ? m.distanceMiles.toFixed(1) + ' mi away' : ''].filter(Boolean).join(' · '),
               distance_km: m.distanceKm || 0,
-              confidence: m.confidenceScore || 0.7
+              confidence: m.confidenceScore || 0.7,
+              attendanceMode: m.attendanceMode || 'In-Person',
+              virtualUrl: m.virtualUrl || '',
+              virtualMeetingId: m.virtualMeetingId || '',
+              virtualPassword: m.virtualPassword || ''
             })),
             location: aggData.location ? aggData.location.resolvedAddress : loc,
             stats: aggData.stats
@@ -9724,11 +9899,13 @@ function filterFlmResults(results) {
   const typeFilter = document.getElementById('flmType').value;
   const formatFilter = document.getElementById('flmFormat').value;
   const accessFilter = document.getElementById('flmAccess').value;
+  const modeFilter = document.getElementById('flmMode').value;
   return results.filter(m => {
     if (dayFilter !== '' && String(m.day) !== dayFilter) return false;
     if (typeFilter && !(m.type || m.fellowship || '').toLowerCase().includes(typeFilter.toLowerCase())) return false;
     if (formatFilter && m.format !== formatFilter) return false;
     if (accessFilter && m.access !== accessFilter) return false;
+    if (modeFilter && m.attendanceMode !== modeFilter) return false;
     return true;
   });
 }
@@ -9762,16 +9939,46 @@ function displayFlmResults(results, location, stats) {
     const confPct = Math.round((m.confidence || 0.7) * 100);
     const distStr = m.distance_km ? (Math.round(m.distance_km * 0.621 * 10) / 10) + ' mi' : '';
 
+    // Attendance mode badge
+    const mode = m.attendanceMode || 'In-Person';
+    const modeBadgeClass = mode === 'Virtual' ? 'flm-badge-virtual' :
+                           mode === 'Hybrid' ? 'flm-badge-hybrid' : 'flm-badge-inperson';
+    const modeBadge = '<span class="flm-mode-badge ' + modeBadgeClass + '">' + escapeHTML(mode) + '</span>';
+
+    // Virtual meeting link
+    let virtualLinkHtml = '';
+    if (m.virtualUrl && (mode === 'Virtual' || mode === 'Hybrid')) {
+      const meetingIdStr = m.virtualMeetingId ? ' · ID: ' + escapeHTML(m.virtualMeetingId) : '';
+      const passwordStr = m.virtualPassword ? ' · PW: ' + escapeHTML(m.virtualPassword) : '';
+      virtualLinkHtml =
+        '<div class="flm-card-virtual">' +
+          '<a href="' + escapeHTML(m.virtualUrl) + '" target="_blank" rel="noopener noreferrer" class="flm-virtual-link">' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14"/><rect x="1" y="6" width="14" height="12" rx="2" ry="2"/></svg>' +
+            ' Join Virtual Meeting' +
+          '</a>' +
+          (meetingIdStr || passwordStr ?
+            '<span class="flm-virtual-details">' + (meetingIdStr + passwordStr).replace(/^ · /, '') + '</span>' : '') +
+        '</div>';
+    }
+
+    // Location line (hide for purely virtual meetings with no address)
+    const hasPhysicalLocation = m.location || m.address;
+    const locationHtml = hasPhysicalLocation ?
+      '<div class="flm-card-location">' + escapeHTML((m.location || '') + (m.address ? ' — ' + m.address : '')) + '</div>' : '';
+
     card.innerHTML =
-      '<div class="flm-card-name">' + escapeHTML(m.name || 'Unnamed Meeting') + '</div>' +
+      '<div class="flm-card-header">' +
+        '<div class="flm-card-name">' + escapeHTML(m.name || 'Unnamed Meeting') + '</div>' +
+        modeBadge +
+      '</div>' +
       '<div class="flm-card-meta">' +
         '<span>' + dayStr + ' · ' + timeStr + '</span>' +
         '<span>' + escapeHTML(m.fellowship || '') + '</span>' +
         '<span>' + escapeHTML(m.format || '') + '</span>' +
         (distStr ? '<span>' + distStr + '</span>' : '') +
       '</div>' +
-      (m.location || m.address ?
-        '<div class="flm-card-location">' + escapeHTML((m.location || '') + (m.address ? ' — ' + m.address : '')) + '</div>' : '') +
+      locationHtml +
+      virtualLinkHtml +
       '<div class="flm-card-footer">' +
         '<span class="flm-card-confidence">Confidence: ' + confPct + '%</span>' +
         '<button class="flm-add-btn" data-flm-idx="' + i + '">Add to Calendar</button>' +
