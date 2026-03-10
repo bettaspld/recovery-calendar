@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recovery Calendar - Documentation</title>
+<style>
+:root {
+    --kraft: #c8a96e;
+    --kraft-light: #dcc99d;
+    --kraft-lighter: #f0e6d0;
+    --kraft-dark: #a07d3f;
+    --kraft-darker: #6b5226;
+    --ink: #313131;
+    --ink-light: #5a4a32;
+    --ink-faint: #8a7a62;
+    --paper: #EAE4DD;
+    --paper-dark: #e0d8cf;
+    --accent: #E49B1D;
+    --accent-dark: #c8860f;
+    --white: #fff;
+    --red-accent: #c0392b;
+    --grid-line: rgba(49, 49, 49, 0.12);
+    --radius: 3px;
+  }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; background: #faf9f6; }
+code { background: #e8e6e1; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+a { color: #2563eb; }
+</style>
+</head>
+<body>
+<div id="docsPage" style="display:block;">
+  <div style="max-width:680px;margin:0 auto;padding:24px 20px 80px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+      <h1 style="font-size:18px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin:0;">Documentation</h1>
+      <button onclick="closeDocs()" style="padding:8px 16px;border-radius:6px;background:var(--accent);color:var(--white);border:none;font-family:inherit;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Back to App</button>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div style="margin-bottom:32px;background:var(--grid-line);border-radius:8px;padding:16px;">
+      <h2 style="font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px;">Quick Links — All Services</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+        <a href="https://app.netlify.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#9729; Netlify Dashboard &#8599;</a>
+        <a href="https://console.neon.tech" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128024; Neon Database &#8599;</a>
+        <a href="https://console.firebase.google.com/project/recovery-calendar-14708" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128293; Firebase Console &#8599;</a>
+        <a href="https://dashboard.emailjs.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#9993; EmailJS Dashboard &#8599;</a>
+        <a href="https://github.com/bettaspld/recovery-calendar" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128025; PWA Repo &#8599;</a>
+        <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128025; Aggregator Repo &#8599;</a>
+        <a href="https://meeting-aggregator.netlify.app" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128269; Live Aggregator API &#8599;</a>
+        <a href="https://platform.openai.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#129302; OpenAI Platform &#8599;</a>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 12px;">Overview</h2>
+      <p style="font-size:13px;line-height:1.7;color:var(--ink);margin:0 0 10px;">
+        Recovery Calendar is a Progressive Web App (PWA) that helps users track recovery meetings, find nearby meetings, and manage their recovery schedule. It works like a native app — installable on phones, works offline, and syncs across devices.
+      </p>
+      <p style="font-size:13px;line-height:1.7;color:var(--ink);margin:0;">
+        The entire front-end lives in a single <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:12px;">index.html</code> file. The back-end consists of Netlify serverless functions and a separate Meeting Aggregator API that crawls and indexes meetings from national databases.
+      </p>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 12px;">Architecture</h2>
+      <div style="font-size:12px;line-height:1.8;color:var(--ink);background:var(--grid-line);border-radius:8px;padding:16px;font-family:monospace;white-space:pre;overflow-x:auto;">User's Browser (PWA)
+  |
+  +-- index.html (all UI, JS, CSS)
+  +-- sw.js (service worker / offline)
+  +-- manifest.json (PWA install)
+  |
+  +-- Firebase (auth + realtime DB)
+  +-- EmailJS (email notifications)
+  |
+  +-- Netlify Functions
+  |     +-- find-meetings.js (legacy search)
+  |     +-- parse-schedule.js (schedule parser)
+  |     +-- chat.js (AI chat helper)
+  |
+  +-- Meeting Aggregator API (meeting-aggregator.netlify.app)
+        +-- /api/search (ZIP + radius + filters)
+        +-- /api/admin/crawl (trigger data refresh)
+        +-- Neon Postgres (56,000+ meetings)
+        +-- BMLT feeds (NA — 51 state queries)
+        +-- 95 AA intergroup feeds (~40 states)</div>
+    </div>
+
+    <!-- HOSTING & DEPLOYMENT -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Hosting & Deployment</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#9729;</span>
+          <strong style="font-size:13px;font-weight:800;">Netlify</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">Hosting</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          Hosts both the Recovery Calendar PWA and the Meeting Aggregator. Auto-deploys from GitHub on every push to the <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">main</code> branch. Also runs serverless functions for search, chat, and schedule parsing.
+        </p>
+        <div style="font-size:11px;">
+          <a href="https://app.netlify.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Netlify Dashboard &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <span style="color:var(--ink-faint);">Sites: recoverycalendar.app, meeting-aggregator.netlify.app</span>
+        </div>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#128025;</span>
+          <strong style="font-size:13px;font-weight:800;">GitHub</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">Version Control</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          Two repositories store all source code. Push changes with <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">git add -A && git commit -m "message" && git push</code> — Netlify auto-deploys.
+        </p>
+        <div style="font-size:11px;">
+          <a href="https://github.com/bettaspld/recovery-calendar" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">recovery-calendar repo &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">meeting-aggregator repo &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTHENTICATION & DATA -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Authentication & Data</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#128293;</span>
+          <strong style="font-size:13px;font-weight:800;">Firebase</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">Auth + Realtime Database</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          Handles user authentication (Google sign-in and email/password) and stores each user's meeting data in Firebase Realtime Database. Data syncs in real-time across devices. The app also works offline via localStorage with sync-on-reconnect.
+        </p>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          Project: <strong>recovery-calendar-14708</strong>
+        </p>
+        <div style="font-size:11px;">
+          <a href="https://console.firebase.google.com/project/recovery-calendar-14708" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Firebase Console &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://firebase.google.com/docs" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Firebase Docs &#8599;</a>
+        </div>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#9993;</span>
+          <strong style="font-size:13px;font-weight:800;">EmailJS</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">Email Notifications</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          Sends email notifications like welcome emails and weekly schedule reminders directly from the browser — no backend email server needed. Uses pre-built HTML email templates.
+        </p>
+        <div style="font-size:11px;">
+          <a href="https://dashboard.emailjs.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">EmailJS Dashboard &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://www.emailjs.com/docs/" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">EmailJS Docs &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEETING AGGREGATOR -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Meeting Aggregator</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#128269;</span>
+          <strong style="font-size:13px;font-weight:800;">Meeting Aggregator API</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">Next.js + Prisma</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          A separate Next.js app that crawls meeting data from national sources, parses it, and serves it via a search API. The PWA calls this when users search by ZIP code in "Find Meetings."
+        </p>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          <strong>Tech stack:</strong> Next.js, TypeScript, Prisma ORM, PostgreSQL<br>
+          <strong>Live URL:</strong> meeting-aggregator.netlify.app<br>
+          <strong>Search endpoint:</strong> <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">/api/search</code> (POST with zipCode, radius, program)
+        </p>
+        <div style="font-size:11px;">
+          <a href="https://meeting-aggregator.netlify.app" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Live Site &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">GitHub Repo &#8599;</a>
+        </div>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#128024;</span>
+          <strong style="font-size:13px;font-weight:800;">Neon</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">Cloud PostgreSQL</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          Serverless Postgres database that stores all crawled meeting data (56,000+ meetings across the US), ZIP code lookup tables, crawl job history, and source configurations. Free tier.
+        </p>
+        <div style="font-size:11px;">
+          <a href="https://console.neon.tech" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Neon Console &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://neon.tech/docs" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Neon Docs &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA SOURCES -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Meeting Data Sources</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#127760;</span>
+          <strong style="font-size:13px;font-weight:800;">BMLT (Narcotics Anonymous)</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">~23,000 meetings</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          The Basic Meeting List Toolbox is the standard API for NA meetings worldwide. The aggregator queries the "Tomato" server (a global aggregator) once per US state to get complete national coverage. Returns structured JSON with meeting names, times, locations, and coordinates.
+        </p>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          <strong>Parser:</strong> <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">bmlt_json</code> (51 state queries)
+        </p>
+        <div style="font-size:11px;">
+          <a href="https://bmlt.app" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">BMLT.app &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://tomato.bmltenabled.org" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Tomato Server &#8599;</a>
+        </div>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#9651;</span>
+          <strong style="font-size:13px;font-weight:800;">Meeting Guide API (Alcoholics Anonymous)</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">~33,000 meetings</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          AA has no single national feed. Each intergroup runs a WordPress site with the "12 Step Meeting List" (TSML) plugin, which exposes a JSON API. The aggregator pulls from 95 intergroup feeds covering approximately 40 US states, providing near-national AA coverage.
+        </p>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          <strong>Parser:</strong> <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">meeting_guide</code><br>
+          <strong>To add more AA coverage:</strong> Find an intergroup website, check if <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">/wp-admin/admin-ajax.php?action=meetings</code> returns JSON, and add it to <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">prisma/seed.ts</code>.
+        </p>
+        <div style="font-size:11px;">
+          <a href="https://github.com/code4recovery/spec" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Meeting Guide API Spec &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://wordpress.org/plugins/12-step-meeting-list/" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">12 Step Meeting List Plugin &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA FEATURES -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">PWA Features</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#128247;</span>
+          <strong style="font-size:13px;font-weight:800;">Service Worker</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">sw.js</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0;">
+          Enables offline functionality and caching. The service worker caches the app shell so the PWA works even without internet. Located at <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">sw.js</code> in the project root.
+        </p>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">&#128241;</span>
+          <strong style="font-size:13px;font-weight:800;">Web App Manifest</strong>
+          <span style="font-size:10px;color:var(--ink-faint);background:var(--grid-line);padding:2px 6px;border-radius:3px;">manifest.json</span>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0;">
+          Defines how the app appears when installed on a phone: name, icons, theme color, and display mode. Located at <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">manifest.json</code> in the project root.
+        </p>
+      </div>
+    </div>
+
+    <!-- NETLIFY FUNCTIONS -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Netlify Serverless Functions</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 10px;">
+          Three serverless functions run on Netlify, defined in <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">netlify/functions/</code>:
+        </p>
+        <div style="font-size:12px;line-height:1.9;color:var(--ink);">
+          <strong>find-meetings.js</strong> — Legacy meeting search (fallback if aggregator is unavailable)<br>
+          <strong>parse-schedule.js</strong> — Parses meeting schedule text/images into structured data<br>
+          <strong>chat.js</strong> — AI chat helper for recovery-related questions
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW TO MAINTAIN -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">How to Maintain</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#128640;</span>
+          <strong style="font-size:13px;font-weight:800;">Deploying Changes</strong>
+        </div>
+        <div style="font-size:12px;line-height:1.8;color:var(--ink);">
+          <strong>Recovery Calendar (PWA):</strong><br>
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">cd ~/Claude\ Projects/Recovery\ Calendar</code><br>
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">git add -A && git commit -m "description" && git push</code><br>
+          <span style="color:var(--ink-faint);">Netlify auto-deploys from GitHub within ~30 seconds.</span>
+        </div>
+        <div style="font-size:12px;line-height:1.8;color:var(--ink);margin-top:12px;">
+          <strong>Meeting Aggregator:</strong><br>
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">cd ~/Claude\ Projects/Recovery\ Calendar/meeting-aggregator</code><br>
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">git add -A && git commit -m "description" && git push</code><br>
+          <span style="color:var(--ink-faint);">Netlify auto-deploys. Code changes only — meeting data is in Neon DB.</span>
+        </div>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#128260;</span>
+          <strong style="font-size:13px;font-weight:800;">Refreshing Meeting Data</strong>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          To manually trigger a refresh (the .env file already contains the Neon DATABASE_URL):
+        </p>
+        <div style="font-size:12px;line-height:1.8;color:var(--ink);">
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">cd ~/Claude\ Projects/Recovery\ Calendar/meeting-aggregator</code><br>
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">npm run dev</code><br>
+          <span style="color:var(--ink-faint);">Then in a separate terminal tab (Cmd+T):</span><br>
+          <code style="background:var(--grid-line);padding:4px 8px;border-radius:3px;font-size:11px;display:inline-block;margin:4px 0;">curl -X POST http://localhost:3000/api/admin/crawl -H "Content-Type: application/json" -d '{"deduplicate":false}'</code><br>
+          <span style="color:var(--ink-faint);">The crawl takes 15-30 minutes to process all 95+ feeds.</span>
+        </div>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#10133;</span>
+          <strong style="font-size:13px;font-weight:800;">Adding New AA Coverage</strong>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          To add a new AA intergroup to the aggregator:
+        </p>
+        <div style="font-size:12px;line-height:1.8;color:var(--ink);">
+          1. Find an AA intergroup website that uses the "12 Step Meeting List" WordPress plugin<br>
+          2. Test if their feed works: visit <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">[site]/wp-admin/admin-ajax.php?action=meetings</code><br>
+          3. If it returns JSON, add the source to <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">prisma/seed.ts</code><br>
+          4. Run <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">npm run db:seed</code> then <code style="background:var(--grid-line);padding:2px 6px;border-radius:3px;font-size:11px;">npm run crawl</code> (with DATABASE_URL for cloud)
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH API -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Search API Reference</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#128269;</span>
+          <strong style="font-size:13px;font-weight:800;">POST /api/search</strong>
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:0 0 8px;">
+          The main search endpoint. Accepts JSON body with these parameters:
+        </p>
+        <div style="font-size:11px;line-height:2.0;color:var(--ink);font-family:monospace;background:var(--grid-line);border-radius:6px;padding:12px;">
+          zipCode: string ......... 5-digit US ZIP code<br>
+          radiusKm: number ........ Search radius in km (default: 16)<br>
+          limit: number ........... Max results (default: 200)<br>
+          program: string[] ....... ["AA", "NA", "SMART", "Al-Anon"]<br>
+          day: number[] ........... [0=Sun, 1=Mon, ... 6=Sat]<br>
+          format: string[] ........ ["Discussion", "Speaker", etc.]<br>
+          access: string .......... "Open" or "Closed"<br>
+          attendanceMode: string .. "In-Person", "Virtual", "Hybrid"<br>
+          textSearch: string ...... Search meeting names<br>
+          city: string ............ Filter by city name<br>
+          state: string ........... Filter by 2-letter state code
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink);margin:10px 0 0;">
+          <strong>Response includes:</strong> meetingName, program, dayOfWeek, startTime, endTime, format, access, attendanceMode, locationName, street, city, state, zip, lat, lng, virtualUrl, virtualMeetingId, virtualPassword, confidenceScore, distanceKm, distanceMiles
+        </p>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#127760;</span>
+          <strong style="font-size:13px;font-weight:800;">Meeting Attendance Modes</strong>
+        </div>
+        <div style="font-size:12px;line-height:1.8;color:var(--ink);">
+          <strong style="color:#2e7d32;">In-Person</strong> — Physical meeting at a location with street address<br>
+          <strong style="color:#1565c0;">Virtual</strong> — Online meeting via Zoom, Google Meet, etc. Includes virtualUrl, virtualMeetingId, and virtualPassword when available<br>
+          <strong style="color:#e65100;">Hybrid</strong> — Both in-person and virtual options available
+        </div>
+        <p style="font-size:11px;line-height:1.7;color:var(--ink-faint);margin:8px 0 0;">
+          Virtual/Hybrid meetings without coordinates are included in radius searches without distance filtering, so they always appear in results regardless of location.
+        </p>
+      </div>
+    </div>
+
+    <!-- ENVIRONMENT VARIABLES -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Environment Variables</h2>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#128272;</span>
+          <strong style="font-size:13px;font-weight:800;">Meeting Aggregator (.env)</strong>
+        </div>
+        <div style="font-size:11px;line-height:2.0;color:var(--ink);font-family:monospace;background:var(--grid-line);border-radius:6px;padding:12px;">
+          DATABASE_URL ............ Neon Postgres connection string<br>
+          <span style="color:var(--ink-faint);">(Set in both local .env AND Netlify env vars)</span>
+        </div>
+        <p style="font-size:11px;line-height:1.7;color:var(--ink-faint);margin:8px 0 0;">
+          IMPORTANT: The local .env and Netlify must use the SAME Neon DATABASE_URL. If they differ, local crawls won't appear on the deployed site.
+        </p>
+      </div>
+
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:16px;">&#128272;</span>
+          <strong style="font-size:13px;font-weight:800;">Netlify Environment Variables</strong>
+        </div>
+        <div style="font-size:11px;line-height:2.0;color:var(--ink);font-family:monospace;background:var(--grid-line);border-radius:6px;padding:12px;">
+          DATABASE_URL ............ Neon Postgres (meeting-aggregator)<br>
+          OPENAI_API_KEY .......... OpenAI key (chat + parse functions)<br>
+        </div>
+        <div style="font-size:11px;margin-top:8px;">
+          <a href="https://app.netlify.com/sites/recovery-calendar/settings/env" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">PWA Env Vars &#8599;</a>
+          <span style="color:var(--ink-faint);margin:0 6px;">|</span>
+          <a href="https://app.netlify.com/sites/meeting-aggregator/settings/env" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">Aggregator Env Vars &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- KEY FILES -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Key Files</h2>
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;">
+        <div style="font-size:12px;line-height:2.0;color:var(--ink);font-family:monospace;">
+          <strong style="font-family:inherit;color:var(--accent);">Recovery Calendar PWA:</strong><br>
+          index.html ............... Entire app (HTML + CSS + JS)<br>
+          sw.js .................... Service worker (offline)<br>
+          manifest.json ............ PWA manifest (install)<br>
+          netlify.toml ............. Netlify config<br>
+          netlify/functions/ ....... Serverless functions<br>
+          <br>
+          <strong style="font-family:inherit;color:var(--accent);">Meeting Aggregator:</strong><br>
+          src/parsers/ ............. BMLT + Meeting Guide parsers<br>
+          src/services/ ............ Crawl + search services<br>
+          src/scripts/ ............. CLI crawl + dedup scripts<br>
+          prisma/schema.prisma ..... Database schema<br>
+          prisma/seed.ts ........... Data source definitions<br>
+          src/app/api/ ............. Next.js API routes
+        </div>
+      </div>
+    </div>
+
+    <!-- COSTS -->
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin:0 0 16px;">Monthly Costs</h2>
+      <div style="border:1.5px solid var(--grid-line);border-radius:8px;padding:16px;">
+        <div style="font-size:12px;line-height:1.9;color:var(--ink);">
+          <strong>Netlify</strong> — Existing plan (hosts both sites)<br>
+          <strong>Neon</strong> — Free tier (0.5 GB storage, autoscaling compute)<br>
+          <strong>Firebase</strong> — Free Spark plan (1 GB database, 50K daily reads)<br>
+          <strong>EmailJS</strong> — Free tier (200 emails/month)<br>
+          <strong>GitHub</strong> — Free (public repos)
+        </div>
+        <p style="font-size:12px;line-height:1.7;color:var(--ink-faint);margin:10px 0 0;">
+          Total additional cost beyond existing Netlify plan: $0/month
+        </p>
+      </div>
+    </div>
+
+    <button onclick="closeDocs()" style="width:100%;padding:14px;border-radius:6px;background:var(--accent);color:var(--white);border:none;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Back to App</button>
+  </div>
+</div>
+<script>
+function closeDocs() { window.close(); }
+</script>
+</body>
+</html>

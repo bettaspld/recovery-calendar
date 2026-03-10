@@ -7614,8 +7614,13 @@ function adminClearLocalStorage() {
 
 function adminShowDocs() {
   closeAdminPanel();
+  // Move docsPage out of appContent if it's nested inside (so hiding appContent doesn't hide docs)
+  var dp = document.getElementById('docsPage');
+  if (dp.parentElement && dp.parentElement.id === 'appContent') {
+    document.body.insertBefore(dp, document.getElementById('appContent'));
+  }
   document.getElementById('appContent').style.display = 'none';
-  document.getElementById('docsPage').style.display = 'block';
+  dp.style.display = 'block';
   window.scrollTo(0, 0);
 }
 
