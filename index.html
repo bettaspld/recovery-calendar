@@ -4171,7 +4171,7 @@
       top: 0;
     }
 
-    /* Settings dropdown on mobile — inline in menu */
+    /* Dropdowns on mobile — inline in menu */
     .nav-dropdown {
       display: flex; flex-direction: column;
       width: 100%;
@@ -4191,6 +4191,9 @@
       width: 100%;
       background: color-mix(in srgb, var(--accent) 4%, var(--paper));
       animation: none;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
     }
     .nav-dropdown.open .nav-dropdown-menu { display: block; }
     .nav-dd-item {
@@ -5340,9 +5343,23 @@
   <nav class="nav-text-menu" id="navTextMenu">
     <button class="nav-text-link guide-nav-home" id="guideNavHome" onclick="closeGuide(); closeNavMenu()" style="display:none;">Home</button>
     <span class="nav-text-sep guide-nav-home" style="display:none;">|</span>
-    <button class="nav-text-link" onclick="openModal(); closeNavMenu()">+ Add Meeting</button>
-    <span class="nav-text-sep">|</span>
-    <button class="nav-text-link" onclick="openFindMeetings(); closeNavMenu()">Find Meetings</button>
+    <div class="nav-dropdown" id="navAddDropdown">
+      <button class="nav-text-link nav-dropdown-trigger" onclick="toggleAddDropdown(event)">Add Meetings <span class="nav-dd-arrow">&#9662;</span></button>
+      <div class="nav-dropdown-menu nav-add-menu" id="addDropdownMenu">
+        <button class="nav-dd-item" onclick="openModal(); closeNavMenu(); closeAddDropdown()">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
+          Manually Add
+        </button>
+        <button class="nav-dd-item" onclick="openFindMeetings(); closeNavMenu(); closeAddDropdown()">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.5" y1="12.5" x2="17" y2="17"/></svg>
+          Find Nearby
+        </button>
+        <button class="nav-dd-item" onclick="document.getElementById('uploadInput').click(); closeNavMenu(); closeAddDropdown()">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 15v2a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2h2"/><polyline points="12 3 16 3 16 7"/><line x1="8" y1="12" x2="16" y2="3"/></svg>
+          Import from Image/Doc
+        </button>
+      </div>
+    </div>
     <span class="nav-text-sep">|</span>
     <div class="nav-dropdown" id="navSettingsDropdown">
       <button class="nav-text-link nav-dropdown-trigger" id="settingsDropdownTrigger" onclick="toggleSettingsDropdown(event)"><span id="settingsDropdownLabel">Settings</span> <span class="nav-dd-arrow">&#9662;</span></button>
@@ -10950,12 +10967,39 @@ function toggleCustomize() {
   }
 }
 
+// === ADD MEETINGS DROPDOWN ===
+function toggleAddDropdown(e) {
+  if (e) e.stopPropagation();
+  var dd = document.getElementById('navAddDropdown');
+  dd.classList.toggle('open');
+  // Close settings if open
+  closeSettingsDropdown();
+  if (dd.classList.contains('open')) {
+    setTimeout(function() {
+      document.addEventListener('click', closeAddDropdownOutside);
+    }, 0);
+  } else {
+    document.removeEventListener('click', closeAddDropdownOutside);
+  }
+}
+function closeAddDropdown() {
+  var dd = document.getElementById('navAddDropdown');
+  if (dd) dd.classList.remove('open');
+  document.removeEventListener('click', closeAddDropdownOutside);
+}
+function closeAddDropdownOutside(e) {
+  var dd = document.getElementById('navAddDropdown');
+  if (dd && !dd.contains(e.target)) closeAddDropdown();
+}
+
 // === SETTINGS ===
 // === SETTINGS DROPDOWN ===
 function toggleSettingsDropdown(e) {
   if (e) e.stopPropagation();
   var dd = document.getElementById('navSettingsDropdown');
   dd.classList.toggle('open');
+  // Close add dropdown if open
+  closeAddDropdown();
   if (dd.classList.contains('open')) {
     // Close on click outside
     setTimeout(function() {
