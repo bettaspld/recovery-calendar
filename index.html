@@ -449,6 +449,11 @@
     -webkit-font-smoothing: antialiased;
     position: relative;
     transition: color 0.4s ease;
+    /* Safe area padding for notched/Dynamic Island phones */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
   }
   body::before {
     content: '';
@@ -2139,6 +2144,8 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
   .modal-overlay.active {
     display: flex;
@@ -2656,6 +2663,7 @@
     background: var(--ink);
     color: rgba(255,255,255,0.6);
     padding: 32px 24px 90px;
+    padding-bottom: max(90px, calc(60px + env(safe-area-inset-bottom)));
     margin-top: 40px;
   }
   .footer-inner {
@@ -3055,6 +3063,7 @@
     align-items: center;
     min-height: 100vh;
     padding: 18vh 24px 40px;
+    padding-top: max(18vh, calc(env(safe-area-inset-top) + 8vh));
     text-align: center;
     background: transparent;
   }
@@ -3301,6 +3310,7 @@
     align-items: center;
     gap: 10px;
     padding: 12px 20px;
+    padding-top: max(12px, env(safe-area-inset-top));
     position: sticky;
     top: 0;
     z-index: 50;
@@ -3647,7 +3657,7 @@
     border-bottom: 1px solid var(--grid-line);
     padding: 0 20px;
     position: sticky;
-    top: 49px;
+    top: calc(49px + env(safe-area-inset-top, 0px));
     z-index: 49;
   }
   .ai-search-panel.open {
@@ -4038,6 +4048,7 @@
     .top-nav {
       gap: 6px;
       padding: 10px 12px;
+      padding-top: max(10px, env(safe-area-inset-top));
       justify-content: space-between;
     }
     .nav-darkmode-btn { order: 0; margin-left: 0; }
@@ -4187,7 +4198,7 @@
       display: none !important;
     }
     .ai-search-panel {
-      top: 43px;
+      top: calc(39px + env(safe-area-inset-top, 0px));
       padding-left: 12px;
       padding-right: 12px;
     }
@@ -4230,6 +4241,7 @@
     /* Landing page mobile adjustments */
     #landingPage {
       padding: 8vh 20px 32px;
+      padding-top: max(8vh, calc(env(safe-area-inset-top) + 4vh));
     }
     .landing-icon {
       margin-bottom: 14px;
@@ -4323,6 +4335,8 @@
     justify-content: center;
     padding: 12px 16px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
     box-shadow: 0 0 20px rgba(255,255,255,0.08);
     transition: padding 0.3s ease;
   }
@@ -6437,21 +6451,24 @@
   <div style="max-width:680px;margin:0 auto;padding:24px 20px 80px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
       <h1 style="font-size:18px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin:0;">Documentation</h1>
-      <button onclick="closeDocs()" style="padding:8px 16px;border-radius:6px;background:var(--accent);color:var(--white);border:none;font-family:inherit;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Back to App</button>
+      <div style="display:flex;gap:8px;">
+        <button onclick="copyDocsLink()" id="docsShareBtn" style="padding:8px 16px;border-radius:6px;background:none;color:var(--accent);border:1.5px solid var(--accent);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Share Link</button>
+        <button onclick="closeDocs()" style="padding:8px 16px;border-radius:6px;background:var(--accent);color:var(--white);border:none;font-family:inherit;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Back to App</button>
+      </div>
     </div>
 
     <!-- QUICK LINKS -->
-    <div style="margin-bottom:32px;background:var(--grid-line);border-radius:8px;padding:16px;">
-      <h2 style="font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px;">Quick Links — All Services</h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
-        <a href="https://app.netlify.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#9729; Netlify Dashboard &#8599;</a>
-        <a href="https://console.neon.tech" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128024; Neon Database &#8599;</a>
-        <a href="https://console.firebase.google.com/project/recovery-calendar-14708" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128293; Firebase Console &#8599;</a>
-        <a href="https://dashboard.emailjs.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#9993; EmailJS Dashboard &#8599;</a>
-        <a href="https://github.com/bettaspld/recovery-calendar" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128025; PWA Repo &#8599;</a>
-        <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128025; Aggregator Repo &#8599;</a>
-        <a href="https://meeting-aggregator.netlify.app" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#128269; Live Aggregator API &#8599;</a>
-        <a href="https://platform.openai.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;padding:6px 0;">&#129302; OpenAI Platform &#8599;</a>
+    <div style="margin-bottom:32px;background:var(--white);border:1.5px solid var(--grid-line);border-radius:8px;padding:16px 20px;">
+      <h2 style="font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin:0 0 12px;">Quick Links — All Services</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font-size:12px;">
+        <a href="https://app.netlify.com" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none;font-weight:700;padding:7px 8px;border-radius:5px;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='none'">&#9729; Netlify Dashboard <span style="color:var(--ink-faint);font-size:10px;">&#8599;</span></a>
+        <a href="https://console.neon.tech" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none;font-weight:700;padding:7px 8px;border-radius:5px;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='none'">&#9881; Neon Database <span style="color:var(--ink-faint);font-size:10px;">&#8599;</span></a>
+        <a href="https://console.firebase.google.com/project/recovery-calendar-14708" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none;font-weight:700;padding:7px 8px;border-radius:5px;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='none'">&#128293; Firebase Console <span style="color:var(--ink-faint);font-size:10px;">&#8599;</span></a>
+        <a href="https://dashboard.emailjs.com" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none;font-weight:700;padding:7px 8px;border-radius:5px;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='none'">&#9993; EmailJS Dashboard <span style="color:var(--ink-faint);font-size:10px;">&#8599;</span></a>
+        <a href="https://github.com/bettaspld/recovery-calendar" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none;font-weight:700;padding:7px 8px;border-radius:5px;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='none'">&#128025; PWA Repo <span style="color:var(--ink-faint);font-size:10px;">&#8599;</span></a>
+        <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none;font-weight:700;padding:7px 8px;border-radius:5px;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='none'">&#128025; Aggregator Repo <span style="color:var(--ink-faint);font-size:10px;">&#8599;</span></a>
+        <a href="https://meeting-aggregator.netlify.app" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none;font-weight:700;padding:7px 8px;border-radius:5px;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='none'">&#128269; Live Aggregator API <span style="color:var(--ink-faint);font-size:10px;">&#8599;</span></a>
+        <a href="https://platform.openai.com" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none;font-weight:700;padding:7px 8px;border-radius:5px;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='none'">&#129302; OpenAI Platform <span style="color:var(--ink-faint);font-size:10px;">&#8599;</span></a>
       </div>
     </div>
 
@@ -7627,6 +7644,19 @@ function adminShowDocs() {
 function closeDocs() {
   document.getElementById('docsPage').style.display = 'none';
   document.getElementById('appContent').style.display = '';
+}
+
+function copyDocsLink() {
+  var url = window.location.origin + '/docs.html';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function() {
+      var btn = document.getElementById('docsShareBtn');
+      btn.textContent = 'Copied!';
+      setTimeout(function() { btn.innerHTML = 'Share Link'; }, 2000);
+    });
+  } else {
+    window.open('/docs.html', '_blank');
+  }
 }
 
 function adminFullReset() {

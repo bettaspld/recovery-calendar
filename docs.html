@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Recovery Calendar — Technical Documentation</title>
+<meta name="description" content="Technical architecture and stack documentation for Recovery Calendar, a Progressive Web App for recovery meeting management.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #2d2a26;
+    --ink-light: #5a5347;
+    --ink-faint: #8a8178;
+    --accent: #d4911a;
+    --accent-dark: #b87a0e;
+    --bg: #f5f2ed;
+    --card-bg: #fff;
+    --card-border: rgba(45, 42, 38, 0.12);
+    --code-bg: #eae6df;
+    --radius: 8px;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Header */
+  .doc-header {
+    background: var(--ink);
+    color: #fff;
+    padding: 48px 24px 40px;
+    text-align: center;
+  }
+  .doc-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .doc-header .subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .doc-header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    max-width: 520px;
+    margin: 16px auto 0;
+    line-height: 1.7;
+  }
+
+  /* Container */
+  .doc-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* Quick Links Bar */
+  .quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 8px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: var(--radius);
+  }
+  .quick-links a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .quick-links a:hover {
+    background: var(--code-bg);
+    color: var(--accent-dark);
+  }
+  .quick-links a .ql-icon {
+    font-size: 15px;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
+  .quick-links a .ql-arrow {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--ink-faint);
+  }
+
+  /* Section Headers */
+  .section-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    margin: 40px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  /* Cards */
+  .card {
+    border: 1.5px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    background: var(--card-bg);
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .card-icon { font-size: 18px; }
+  .card-name { font-size: 14px; font-weight: 800; color: var(--ink); }
+  .card-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    background: var(--code-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+  }
+  .card p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+  .card p:last-child { margin-bottom: 0; }
+  .card-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: 12px;
+  }
+  .card-links a {
+    color: var(--accent-dark);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .card-links a:hover { text-decoration: underline; }
+  .card-links .sep {
+    color: var(--card-border);
+  }
+
+  /* Code blocks */
+  code {
+    background: var(--code-bg);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  .code-block {
+    background: var(--ink);
+    color: #e0ddd8;
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.9;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 12px 0;
+  }
+  .code-block .comment { color: #7a7568; }
+  .code-block .highlight { color: var(--accent); }
+
+  /* Architecture diagram */
+  .arch-diagram {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--ink);
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 12px;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .stat {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent-dark);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* File tree */
+  .file-tree {
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 2.0;
+    color: var(--ink-light);
+  }
+  .file-tree strong { color: var(--accent-dark); font-family: inherit; }
+
+  /* API params */
+  .api-params {
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 11px;
+    line-height: 2.0;
+    color: var(--ink);
+    background: var(--code-bg);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin: 10px 0;
+  }
+
+  /* Costs table */
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 13px;
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-service { font-weight: 700; }
+  .cost-price { color: #2e7d32; font-weight: 600; }
+
+  /* Footer */
+  .doc-footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--card-border);
+    margin-top: 48px;
+  }
+  .doc-footer a { color: var(--accent-dark); text-decoration: none; }
+  .doc-footer a:hover { text-decoration: underline; }
+
+  /* Safe area for notch/Dynamic Island */
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .doc-header {
+    padding-top: max(32px, calc(env(safe-area-inset-top) + 16px));
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .doc-header h1 { font-size: 22px; letter-spacing: 2px; }
+    .doc-header { padding-top: max(24px, calc(env(safe-area-inset-top) + 12px)); }
+    .quick-links { grid-template-columns: 1fr 1fr; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .doc-container { padding: 20px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>Recovery Calendar</h1>
+  <div class="subtitle">Technical Documentation</div>
+  <p>A free, open-source Progressive Web App for organizing recovery meetings, finding local groups, and managing sobriety tracking.</p>
+</div>
+
+<div class="doc-container">
+
+  <!-- QUICK LINKS -->
+  <div class="quick-links">
+    <a href="https://app.netlify.com" target="_blank" rel="noopener"><span class="ql-icon">&#9729;</span> Netlify<span class="ql-arrow">&#8599;</span></a>
+    <a href="https://console.neon.tech" target="_blank" rel="noopener"><span class="ql-icon">&#9881;</span> Neon DB<span class="ql-arrow">&#8599;</span></a>
+    <a href="https://console.firebase.google.com/project/recovery-calendar-14708" target="_blank" rel="noopener"><span class="ql-icon">&#128293;</span> Firebase<span class="ql-arrow">&#8599;</span></a>
+    <a href="https://dashboard.emailjs.com" target="_blank" rel="noopener"><span class="ql-icon">&#9993;</span> EmailJS<span class="ql-arrow">&#8599;</span></a>
+    <a href="https://github.com/bettaspld/recovery-calendar" target="_blank" rel="noopener"><span class="ql-icon">&#128025;</span> PWA Repo<span class="ql-arrow">&#8599;</span></a>
+    <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener"><span class="ql-icon">&#128025;</span> API Repo<span class="ql-arrow">&#8599;</span></a>
+    <a href="https://meeting-aggregator.netlify.app" target="_blank" rel="noopener"><span class="ql-icon">&#128269;</span> Live API<span class="ql-arrow">&#8599;</span></a>
+    <a href="https://platform.openai.com" target="_blank" rel="noopener"><span class="ql-icon">&#129302;</span> OpenAI<span class="ql-arrow">&#8599;</span></a>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num">56K+</div><div class="stat-label">Meetings</div></div>
+    <div class="stat"><div class="stat-num">95</div><div class="stat-label">AA Feeds</div></div>
+    <div class="stat"><div class="stat-num">51</div><div class="stat-label">NA State Queries</div></div>
+    <div class="stat"><div class="stat-num">$0</div><div class="stat-label">Monthly Cost</div></div>
+  </div>
+
+  <!-- ARCHITECTURE -->
+  <div class="section-title">Architecture</div>
+  <div class="arch-diagram"><span class="highlight">User's Browser (PWA)</span>
+  |
+  +-- index.html (all UI, JS, CSS)
+  +-- sw.js (service worker / offline)
+  +-- manifest.json (PWA install)
+  |
+  +-- <span class="highlight">Firebase</span> (auth + realtime DB)
+  +-- <span class="highlight">EmailJS</span> (email notifications)
+  |
+  +-- <span class="highlight">Netlify Functions</span>
+  |     +-- find-meetings.js (legacy search)
+  |     +-- parse-schedule.js (schedule parser)
+  |     +-- chat.js (AI chat helper)
+  |
+  +-- <span class="highlight">Meeting Aggregator API</span> (meeting-aggregator.netlify.app)
+        +-- /api/search (ZIP + radius + filters)
+        +-- /api/admin/crawl (trigger data refresh)
+        +-- Neon Postgres (56,000+ meetings)
+        +-- BMLT feeds (NA &mdash; 51 state queries)
+        +-- 95 AA intergroup feeds (~40 states)</div>
+
+  <!-- HOSTING & DEPLOYMENT -->
+  <div class="section-title">Hosting &amp; Deployment</div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#9729;</span>
+      <span class="card-name">Netlify</span>
+      <span class="card-badge">Hosting + Serverless</span>
+    </div>
+    <p>Hosts both the Recovery Calendar PWA and the Meeting Aggregator. Auto-deploys from GitHub on every push to <code>main</code>. Also runs serverless functions for search, chat, and schedule parsing.</p>
+    <p>Sites: <strong>recoverycalendar.app</strong> &middot; <strong>meeting-aggregator.netlify.app</strong></p>
+    <div class="card-links">
+      <a href="https://app.netlify.com" target="_blank" rel="noopener">Dashboard &#8599;</a>
+      <a href="https://docs.netlify.com" target="_blank" rel="noopener">Docs &#8599;</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#128025;</span>
+      <span class="card-name">GitHub</span>
+      <span class="card-badge">Version Control</span>
+    </div>
+    <p>Two repositories store all source code. Push to <code>main</code> to trigger auto-deploy.</p>
+    <div class="card-links">
+      <a href="https://github.com/bettaspld/recovery-calendar" target="_blank" rel="noopener">recovery-calendar &#8599;</a>
+      <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener">meeting-aggregator &#8599;</a>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION & DATA -->
+  <div class="section-title">Authentication &amp; Data</div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#128293;</span>
+      <span class="card-name">Firebase</span>
+      <span class="card-badge">Auth + Realtime Database</span>
+    </div>
+    <p>Handles user authentication (Google sign-in and email/password) and stores each user's meeting data in Firebase Realtime Database. Data syncs in real-time across devices. The app also works offline via localStorage with sync-on-reconnect.</p>
+    <p>Project: <strong>recovery-calendar-14708</strong></p>
+    <div class="card-links">
+      <a href="https://console.firebase.google.com/project/recovery-calendar-14708" target="_blank" rel="noopener">Console &#8599;</a>
+      <a href="https://firebase.google.com/docs" target="_blank" rel="noopener">Docs &#8599;</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#9993;</span>
+      <span class="card-name">EmailJS</span>
+      <span class="card-badge">Email Notifications</span>
+    </div>
+    <p>Sends email notifications like welcome emails and weekly schedule reminders directly from the browser &mdash; no backend email server needed. Uses pre-built HTML email templates.</p>
+    <div class="card-links">
+      <a href="https://dashboard.emailjs.com" target="_blank" rel="noopener">Dashboard &#8599;</a>
+      <a href="https://www.emailjs.com/docs/" target="_blank" rel="noopener">Docs &#8599;</a>
+    </div>
+  </div>
+
+  <!-- MEETING AGGREGATOR -->
+  <div class="section-title">Meeting Aggregator</div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#128269;</span>
+      <span class="card-name">Meeting Aggregator API</span>
+      <span class="card-badge">Next.js + Prisma + TypeScript</span>
+    </div>
+    <p>A separate Next.js application that crawls meeting data from national sources, normalizes and deduplicates it, and serves it via a search API. The PWA calls this when users search by ZIP code in "Find Meetings."</p>
+    <p><strong>Tech:</strong> Next.js 14, TypeScript, Prisma ORM, PostgreSQL<br>
+    <strong>Live:</strong> meeting-aggregator.netlify.app<br>
+    <strong>Endpoint:</strong> <code>POST /api/search</code></p>
+    <div class="card-links">
+      <a href="https://meeting-aggregator.netlify.app" target="_blank" rel="noopener">Live Site &#8599;</a>
+      <a href="https://github.com/bettaspld/meeting-aggregator" target="_blank" rel="noopener">GitHub &#8599;</a>
+      <a href="https://nextjs.org/docs" target="_blank" rel="noopener">Next.js Docs &#8599;</a>
+      <a href="https://www.prisma.io/docs" target="_blank" rel="noopener">Prisma Docs &#8599;</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#9881;</span>
+      <span class="card-name">Neon</span>
+      <span class="card-badge">Cloud PostgreSQL</span>
+    </div>
+    <p>Serverless Postgres database storing 56,000+ crawled meetings across the US, ZIP code lookup tables, crawl job history, and source configurations.</p>
+    <div class="card-links">
+      <a href="https://console.neon.tech" target="_blank" rel="noopener">Console &#8599;</a>
+      <a href="https://neon.tech/docs" target="_blank" rel="noopener">Docs &#8599;</a>
+    </div>
+  </div>
+
+  <!-- DATA SOURCES -->
+  <div class="section-title">Meeting Data Sources</div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#127760;</span>
+      <span class="card-name">BMLT (Narcotics Anonymous)</span>
+      <span class="card-badge">~23,000 meetings</span>
+    </div>
+    <p>The Basic Meeting List Toolbox is the standard API for NA meetings worldwide. The aggregator queries the "Tomato" server (a global aggregator) per US state for complete national coverage. Returns structured JSON with meeting names, times, locations, coordinates, and virtual meeting links.</p>
+    <p><strong>Parser:</strong> <code>bmlt_json</code> (51 state queries)</p>
+    <div class="card-links">
+      <a href="https://bmlt.app" target="_blank" rel="noopener">BMLT.app &#8599;</a>
+      <a href="https://tomato.bmltenabled.org" target="_blank" rel="noopener">Tomato Server &#8599;</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#9651;</span>
+      <span class="card-name">Meeting Guide API (Alcoholics Anonymous)</span>
+      <span class="card-badge">~33,000 meetings</span>
+    </div>
+    <p>AA has no single national API. Each local intergroup runs a WordPress site with the "12 Step Meeting List" (TSML) plugin, which exposes a JSON feed. The aggregator pulls from 95 intergroup feeds covering approximately 40 US states.</p>
+    <p><strong>Parser:</strong> <code>meeting_guide</code><br>
+    <strong>Feed pattern:</strong> <code>[site]/wp-admin/admin-ajax.php?action=meetings</code></p>
+    <div class="card-links">
+      <a href="https://github.com/code4recovery/spec" target="_blank" rel="noopener">API Spec &#8599;</a>
+      <a href="https://wordpress.org/plugins/12-step-meeting-list/" target="_blank" rel="noopener">TSML Plugin &#8599;</a>
+    </div>
+  </div>
+
+  <!-- SEARCH API -->
+  <div class="section-title">Search API Reference</div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#128268;</span>
+      <span class="card-name">POST /api/search</span>
+    </div>
+    <p>The main search endpoint. Accepts JSON body:</p>
+    <div class="api-params">zipCode: string ......... 5-digit US ZIP code
+radiusKm: number ........ Search radius in km (default: 16)
+limit: number ........... Max results (default: 200)
+program: string[] ....... ["AA", "NA", "SMART", "Al-Anon"]
+day: number[] ........... [0=Sun, 1=Mon, ... 6=Sat]
+format: string[] ........ ["Discussion", "Speaker", etc.]
+access: string .......... "Open" or "Closed"
+attendanceMode: string .. "In-Person", "Virtual", "Hybrid"
+textSearch: string ...... Search meeting names
+city: string ............ Filter by city name
+state: string ........... Filter by 2-letter state code</div>
+    <p><strong>Response fields:</strong> meetingName, program, dayOfWeek, startTime, endTime, format, access, attendanceMode, locationName, street, city, state, zip, lat, lng, virtualUrl, virtualMeetingId, virtualPassword, confidenceScore, distanceKm, distanceMiles</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#127760;</span>
+      <span class="card-name">Meeting Attendance Modes</span>
+    </div>
+    <p>
+      <strong style="color:#2e7d32;">In-Person</strong> &mdash; Physical meeting at a location with street address<br>
+      <strong style="color:#1565c0;">Virtual</strong> &mdash; Online via Zoom, Google Meet, etc. Includes virtualUrl, virtualMeetingId, and virtualPassword<br>
+      <strong style="color:#e65100;">Hybrid</strong> &mdash; Both in-person and virtual options available
+    </p>
+    <p style="font-size:12px;color:var(--ink-faint);">Virtual/Hybrid meetings without coordinates are included in radius searches without distance filtering.</p>
+  </div>
+
+  <!-- PWA FEATURES -->
+  <div class="section-title">PWA Features</div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#128247;</span>
+      <span class="card-name">Service Worker</span>
+      <span class="card-badge">sw.js</span>
+    </div>
+    <p>Enables offline functionality and caching. The service worker caches the app shell so the PWA works even without internet.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">&#128241;</span>
+      <span class="card-name">Web App Manifest</span>
+      <span class="card-badge">manifest.json</span>
+    </div>
+    <p>Defines how the app appears when installed: name, icons, theme color, and standalone display mode. Installable on iOS, Android, and desktop.</p>
+  </div>
+
+  <!-- SERVERLESS FUNCTIONS -->
+  <div class="section-title">Netlify Serverless Functions</div>
+
+  <div class="card">
+    <p>Three serverless functions in <code>netlify/functions/</code>:</p>
+    <p>
+      <strong>find-meetings.js</strong> &mdash; Legacy meeting search (fallback if aggregator unavailable)<br>
+      <strong>parse-schedule.js</strong> &mdash; AI-powered parsing of meeting schedule text/images into structured data<br>
+      <strong>chat.js</strong> &mdash; AI chat helper for recovery-related questions
+    </p>
+  </div>
+
+  <!-- KEY FILES -->
+  <div class="section-title">Key Files</div>
+
+  <div class="card">
+    <div class="file-tree">
+<strong>Recovery Calendar PWA:</strong>
+index.html ............... Entire app (HTML + CSS + JS)
+sw.js .................... Service worker (offline)
+manifest.json ............ PWA manifest (install)
+netlify.toml ............. Netlify config
+netlify/functions/ ....... Serverless functions
+
+<strong>Meeting Aggregator:</strong>
+src/parsers/ ............. BMLT + Meeting Guide parsers
+src/services/ ............ Crawl, search, dedup services
+src/lib/ ................. Geocoding, normalization, ZIP lookup
+prisma/schema.prisma ..... Database schema (Prisma)
+prisma/seed.ts ........... 95 AA + 51 NA source definitions
+src/app/api/ ............. Next.js API routes</div>
+  </div>
+
+  <!-- COSTS -->
+  <div class="section-title">Monthly Costs</div>
+
+  <div class="card">
+    <div class="cost-row"><span class="cost-service">Netlify</span><span class="cost-price">Existing plan</span></div>
+    <div class="cost-row"><span class="cost-service">Neon PostgreSQL</span><span class="cost-price">Free tier</span></div>
+    <div class="cost-row"><span class="cost-service">Firebase</span><span class="cost-price">Free Spark plan</span></div>
+    <div class="cost-row"><span class="cost-service">EmailJS</span><span class="cost-price">Free tier</span></div>
+    <div class="cost-row"><span class="cost-service">GitHub</span><span class="cost-price">Free</span></div>
+    <div class="cost-row" style="border-top:2px solid var(--card-border);margin-top:4px;padding-top:12px;font-weight:700;">
+      <span>Total additional cost</span><span class="cost-price">$0/month</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <p><a href="https://recoverycalendar.app">recoverycalendar.app</a> &middot; Built with care &middot; Open Source</p>
+  </div>
+
+</div>
+
+</body>
+</html>
