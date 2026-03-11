@@ -755,7 +755,7 @@
 
   /* === FILTER BAR === */
   .filter-bar {
-    background: var(--ink);
+    background: color-mix(in srgb, var(--ink) 85%, var(--paper));
     padding: 0;
     animation: navFadeIn 0.4s ease 0.2s both;
   }
@@ -764,72 +764,93 @@
   .filter-tabs {
     display: flex;
     justify-content: flex-start;
-    padding: 0 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 0;
+    background: var(--ink);
   }
   .filter-tab {
     font-family: inherit;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 1.8px;
     text-transform: uppercase;
-    padding: 16px 24px;
+    padding: 14px 24px;
     border: none;
     background: transparent;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.4);
     cursor: pointer;
-    transition: color 0.2s;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -1px;
+    transition: color 0.2s, background 0.2s, border-radius 0.2s;
     position: relative;
   }
-  .filter-tab:hover { color: rgba(255,255,255,0.75); }
+  .filter-tab:hover { color: rgba(255,255,255,0.7); }
   .filter-tab.active {
     color: var(--white);
-    border-bottom-color: var(--white);
+    background: color-mix(in srgb, var(--ink) 85%, var(--paper));
+    border-radius: 10px 10px 0 0;
   }
 
-  /* === Controls row: pills + clear === */
+  /* === Controls row: sliding pill toggles === */
   .filter-controls-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    padding: 16px 24px;
+    gap: 16px;
+    padding: 14px 20px 10px;
   }
   .filter-pill-group {
-    display: inline-flex;
-    background: rgba(255,255,255,0.06);
-    border: 1.5px solid rgba(255,255,255,0.2);
+    display: flex;
+    position: relative;
+    background: color-mix(in srgb, var(--ink) 50%, transparent);
     border-radius: 999px;
+    height: 28px;
     padding: 2px;
-    gap: 2px;
+    gap: 0;
+  }
+  .filter-pill-slider {
+    position: absolute;
+    top: 2px;
+    height: calc(100% - 4px);
+    background: var(--accent);
+    border-radius: 999px;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
   }
   .filter-pill {
     font-family: inherit;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 9px;
+    font-weight: 800;
     letter-spacing: 1.2px;
     text-transform: uppercase;
-    padding: 8px 18px;
+    padding: 4px 14px;
     border: none;
     border-radius: 999px;
     background: transparent;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.5);
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    white-space: nowrap;
+    outline: none;
   }
   .filter-pill:hover {
-    color: rgba(255,255,255,0.9);
-    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.8);
   }
   .filter-pill.active {
-    background: var(--accent);
     color: var(--white);
+    background: transparent;
+  }
+
+  /* === Clear row (bottom-right of chips) === */
+  .filter-clear-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 6px 0 0;
   }
   .filter-clear-btn {
     font-family: inherit;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.8px;
     text-transform: uppercase;
@@ -837,8 +858,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px 12px;
-    margin-left: auto;
+    padding: 6px 4px;
     transition: color 0.15s;
   }
   .filter-clear-btn:hover { color: var(--white); }
@@ -852,16 +872,15 @@
     transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
   }
   .filter-tab-panel.active {
-    max-height: 600px;
+    max-height: 800px;
     opacity: 1;
-    padding: 8px 24px 20px;
+    padding: 0 24px 16px;
     transition: max-height 0.3s ease, opacity 0.25s ease 0.05s, padding 0.3s ease;
   }
 
   /* Remove old compat */
   .clear-all { display: none; }
   .filter-bar-right { display: none; }
-  .filter-clear-row { display: none; }
   .filter-toggles-row { display: none; }
 
   .btn {
@@ -990,10 +1009,10 @@
     font-weight: 600;
     letter-spacing: 0.3px;
     padding: 10px 20px;
-    border: 1.5px solid rgba(255,255,255,0.35);
+    border: 1.5px solid rgba(255,255,255,0.4);
     border-radius: 999px;
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.9);
     cursor: pointer;
     transition: all 0.15s;
     white-space: nowrap;
@@ -1077,28 +1096,24 @@
 
   /* === TABLET/MOBILE FILTER BAR === */
   @media (max-width: 960px) {
-    .filter-tabs {
-      gap: 0;
-      padding: 0 14px;
-    }
     .filter-tab {
       font-size: 10px;
       padding: 12px 14px;
       letter-spacing: 1px;
     }
     .filter-controls-row {
-      gap: 12px;
-      padding: 12px 14px;
+      gap: 10px;
+      padding: 10px 14px 8px;
     }
     .filter-pill {
-      font-size: 9px;
-      padding: 6px 12px;
+      font-size: 8px;
+      padding: 4px 10px;
+    }
+    .filter-pill-group {
+      height: 24px;
     }
   }
   @media (max-width: 480px) {
-    .filter-tabs {
-      padding: 0 10px;
-    }
     .filter-tab {
       font-size: 9px;
       padding: 10px 10px;
@@ -1107,17 +1122,20 @@
     .filter-controls-row {
       flex-wrap: wrap;
       gap: 8px;
-      padding: 8px 12px;
+      padding: 8px 12px 6px;
     }
     .filter-pill {
-      font-size: 8px;
-      padding: 6px 10px;
+      font-size: 7px;
+      padding: 4px 9px;
+    }
+    .filter-pill-group {
+      height: 22px;
     }
     .filter-tab-panel {
       padding: 0 12px;
     }
     .filter-tab-panel.active {
-      padding: 8px 12px 16px;
+      padding: 0 12px 12px;
     }
     .chip {
       font-size: 11px;
@@ -5543,30 +5561,39 @@
     <button class="filter-tab" data-tab="location" onclick="switchFilterTab('location')">Location</button>
   </div>
 
-  <!-- Pills row: Access + Gender + Clear -->
-  <div class="filter-controls-row">
-    <div class="filter-pill-group">
-      <button class="filter-pill active" onclick="setAccessFilter(this, '')" data-val="">All</button>
-      <button class="filter-pill" onclick="setAccessFilter(this, 'Anyone Welcome')" data-val="Anyone Welcome">Open</button>
-      <button class="filter-pill" onclick="setAccessFilter(this, 'Members Only')" data-val="Members Only">Closed</button>
-    </div>
-    <div class="filter-pill-group">
-      <button class="filter-pill active" onclick="setGenderFilter(this, '')" data-val="">All</button>
-      <button class="filter-pill" onclick="setGenderFilter(this, 'Men')" data-val="Men">Mens</button>
-      <button class="filter-pill" onclick="setGenderFilter(this, 'Women')" data-val="Women">Womens</button>
-    </div>
-    <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
-  </div>
-
   <!-- Tab panels (collapsed by default) -->
   <div class="filter-tab-panel" id="filterTabType">
+    <!-- Sliding pill toggles: Access + Gender -->
+    <div class="filter-controls-row">
+      <div class="filter-pill-group" id="accessPillGroup">
+        <div class="filter-pill-slider" id="accessPillSlider"></div>
+        <button class="filter-pill active" onclick="setAccessFilter(this, '')" data-val="">All</button>
+        <button class="filter-pill" onclick="setAccessFilter(this, 'Anyone Welcome')" data-val="Anyone Welcome">Open</button>
+        <button class="filter-pill" onclick="setAccessFilter(this, 'Members Only')" data-val="Members Only">Closed</button>
+      </div>
+      <div class="filter-pill-group" id="genderPillGroup">
+        <div class="filter-pill-slider" id="genderPillSlider"></div>
+        <button class="filter-pill active" onclick="setGenderFilter(this, '')" data-val="">All</button>
+        <button class="filter-pill" onclick="setGenderFilter(this, 'Men')" data-val="Men">Mens</button>
+        <button class="filter-pill" onclick="setGenderFilter(this, 'Women')" data-val="Women">Womens</button>
+      </div>
+    </div>
     <div class="chip-wrap" id="chipsFellowship"></div>
+    <div class="filter-clear-row">
+      <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+    </div>
   </div>
   <div class="filter-tab-panel" id="filterTabFormat">
     <div class="chip-wrap" id="chipsFormat"></div>
+    <div class="filter-clear-row">
+      <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+    </div>
   </div>
   <div class="filter-tab-panel" id="filterTabLocation">
     <div class="chip-wrap" id="chipsPlace"></div>
+    <div class="filter-clear-row">
+      <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+    </div>
   </div>
 </div>
 
@@ -8755,8 +8782,8 @@ function init() {
 
   render();
   // Position toggle sliders after first render + on resize
-  requestAnimationFrame(() => { updateMeetingsSlider(false); updateViewSlider(false); });
-  window.addEventListener('resize', () => { updateMeetingsSlider(false); updateViewSlider(false); });
+  requestAnimationFrame(() => { updateMeetingsSlider(false); updateViewSlider(false); updatePillSlider('accessPillGroup', 'accessPillSlider', false); updatePillSlider('genderPillGroup', 'genderPillSlider', false); });
+  window.addEventListener('resize', () => { updateMeetingsSlider(false); updateViewSlider(false); updatePillSlider('accessPillGroup', 'accessPillSlider', false); updatePillSlider('genderPillGroup', 'genderPillSlider', false); });
   initSearchPlaceholder();
 
   // Firebase listeners are now set up per-user in handleAuthStateChange()
@@ -8851,6 +8878,29 @@ function switchFilterTab(tab) {
     document.getElementById('filterTabType').classList.toggle('active', tab === 'type');
     document.getElementById('filterTabFormat').classList.toggle('active', tab === 'format');
     document.getElementById('filterTabLocation').classList.toggle('active', tab === 'location');
+    // Init pill sliders when opening Meeting Type tab
+    if (tab === 'type') {
+      requestAnimationFrame(function() {
+        updatePillSlider('accessPillGroup', 'accessPillSlider');
+        updatePillSlider('genderPillGroup', 'genderPillSlider');
+      });
+    }
+  }
+}
+
+// === Sliding pill animation ===
+function updatePillSlider(groupId, sliderId, animate) {
+  var group = document.getElementById(groupId);
+  var slider = document.getElementById(sliderId);
+  if (!group || !slider) return;
+  var activeBtn = group.querySelector('.filter-pill.active');
+  if (!activeBtn) { slider.style.width = '0'; return; }
+  if (animate === false) slider.style.transition = 'none';
+  slider.style.left = activeBtn.offsetLeft + 'px';
+  slider.style.width = activeBtn.offsetWidth + 'px';
+  if (animate === false) {
+    slider.offsetHeight; // force reflow
+    slider.style.transition = '';
   }
 }
 
@@ -8860,6 +8910,8 @@ function setAccessFilter(btn, value) {
     p.classList.remove('active');
   });
   btn.classList.add('active');
+  // Animate slider
+  updatePillSlider('accessPillGroup', 'accessPillSlider');
   // Update filter
   filters.access.clear();
   if (value) filters.access.add(value);
@@ -8872,6 +8924,8 @@ function setGenderFilter(btn, value) {
     p.classList.remove('active');
   });
   btn.classList.add('active');
+  // Animate slider
+  updatePillSlider('genderPillGroup', 'genderPillSlider');
   // Update filter
   filters.gender.clear();
   if (value) filters.gender.add(value);
@@ -8886,6 +8940,9 @@ function clearAllFilters() {
       p.classList.toggle('active', i === 0);
     });
   });
+  // Animate sliders back to "All"
+  updatePillSlider('accessPillGroup', 'accessPillSlider');
+  updatePillSlider('genderPillGroup', 'genderPillSlider');
   // Reset chip selections
   document.querySelectorAll('.chip.selected').forEach(function(c) {
     c.classList.remove('selected');
@@ -8980,6 +9037,8 @@ function clearFilter(key) {
         p.classList.toggle('active', i === 0);
       });
     });
+    updatePillSlider('accessPillGroup', 'accessPillSlider');
+    updatePillSlider('genderPillGroup', 'genderPillSlider');
   }
   render();
 }
