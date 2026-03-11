@@ -756,84 +756,99 @@
   /* === FILTER BAR === */
   .filter-bar {
     background: var(--ink);
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    align-items: stretch;
+    padding: 0 0 16px;
     animation: navFadeIn 0.4s ease 0.2s both;
   }
-  .filter-nav {
+  /* Tab headers */
+  .filter-tabs {
     display: flex;
-    align-items: stretch;
     justify-content: center;
-    flex: 1;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
   }
-  .filter-toggle {
+  .filter-tab {
     font-family: inherit;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    padding: 16px 26px;
+    padding: 14px 20px;
     border: none;
     background: transparent;
-    color: var(--white);
+    color: rgba(255,255,255,0.5);
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: relative;
+    transition: color 0.2s, border-color 0.2s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
   }
-  .filter-toggle:hover {
-    background: rgba(255,255,255,0.08);
-  }
-  .filter-toggle:active {
-    transform: scale(0.97);
-  }
-  .filter-toggle.open {
-    background: color-mix(in srgb, var(--ink) 88%, white);
-  }
-  .filter-toggle.has-selection { color: color-mix(in srgb, var(--accent) 70%, white); }
-  .filter-toggle .count {
-    font-size: 9px;
-    font-weight: 800;
+  .filter-tab:hover { color: rgba(255,255,255,0.8); }
+  .filter-tab.active {
     color: var(--white);
-    background: none;
-    display: inline;
-    line-height: 1;
-    margin-left: -6px;
-    vertical-align: super;
+    border-bottom-color: var(--accent);
   }
-  .filter-toggle .arrow {
-    font-size: 11px;
-    color: var(--accent);
-    transition: transform 0.2s;
-  }
-  .filter-toggle.has-selection .arrow { color: color-mix(in srgb, var(--accent) 70%, white); }
-  .filter-toggle.open .arrow { transform: rotate(90deg); }
-
-  .filter-bar-right {
+  /* Inline pill toggles for Access + Gender */
+  .filter-toggles-row {
     display: flex;
-    align-items: center;
-    padding-right: 16px;
-    gap: 8px;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 20px;
   }
-  .clear-all {
+  .filter-pill-group {
+    display: flex;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .filter-pill {
     font-family: inherit;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
+    padding: 7px 16px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .filter-pill:not(:last-child) {
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+  .filter-pill:hover { background: rgba(255,255,255,0.08); }
+  .filter-pill.active {
+    background: var(--accent);
+    color: var(--white);
+  }
+  /* Clear row */
+  .filter-clear-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 20px 6px;
+  }
+  .filter-clear-btn {
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
     color: var(--accent);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px 12px;
-    display: inline-block;
+    padding: 4px 8px;
   }
-  .clear-all:hover { color: var(--white); text-decoration: underline; }
+  .filter-clear-btn:hover { color: var(--white); }
+  /* Tab panels */
+  .filter-tab-panel {
+    display: none;
+    padding: 0 20px;
+  }
+  .filter-tab-panel.active {
+    display: block;
+  }
+  /* Keep old clear-all for backward compat */
+  .clear-all { display: none; }
+  .filter-bar-right { display: none; }
 
   .btn {
     font-family: inherit;
@@ -922,27 +937,8 @@
   }
 
   /* === CHIP PANEL (Desktop) === */
-  .chip-panel {
-    background: color-mix(in srgb, var(--ink) 88%, white);
-    padding: 0 24px;
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.25s ease-in, padding 0.25s ease-in, opacity 0.15s ease-in;
-  }
-  .chip-panel.open {
-    max-height: 500px;
-    padding: 14px 24px 24px;
-    opacity: 1;
-    transition: max-height 0.25s ease-out, padding 0.25s ease-out, opacity 0.2s ease-out 0.05s;
-  }
-  .chip-panel-inner {
-    transition: opacity 0.12s ease, height 0.2s ease;
-    overflow: hidden;
-  }
-  .chip-panel-inner.fading {
-    opacity: 0;
-  }
+  /* Old chip-panel (kept for bottom sheet) */
+  .chip-panel { display: none; }
   .chip-panel-header {
     display: flex;
     justify-content: space-between;
@@ -1067,35 +1063,40 @@
 
   /* === TABLET/MOBILE FILTER BAR === */
   @media (max-width: 960px) {
-    .filter-bar {
-      flex-direction: column;
-      align-items: stretch;
+    .filter-tabs {
+      gap: 0;
     }
-    .filter-nav {
-      flex-wrap: nowrap;
-      justify-content: center;
+    .filter-tab {
+      font-size: 10px;
+      padding: 12px 14px;
+      letter-spacing: 1px;
     }
-    .filter-toggle {
-      font-size: 11px;
-      letter-spacing: 1.2px;
-      padding: 14px 10px;
-      gap: 5px;
+    .filter-toggles-row {
+      gap: 10px;
+      padding: 10px 14px;
     }
-    .filter-bar-right {
-      justify-content: center;
-      padding: 4px 16px 12px;
-      width: 100%;
+    .filter-pill {
+      font-size: 9px;
+      padding: 6px 12px;
     }
   }
   @media (max-width: 480px) {
-    .filter-toggle {
+    .filter-tab {
       font-size: 9px;
-      letter-spacing: 1px;
-      padding: 14px 8px;
-      gap: 4px;
+      padding: 10px 10px;
+      letter-spacing: 0.8px;
     }
-    .chip-panel.open {
-      padding: 12px 16px;
+    .filter-toggles-row {
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 12px;
+    }
+    .filter-pill {
+      font-size: 8px;
+      padding: 6px 10px;
+    }
+    .filter-tab-panel {
+      padding: 0 12px;
     }
     .chip {
       font-size: 11px;
@@ -5512,47 +5513,53 @@
   <button class="clear-all" onclick="clearAllFilters()" style="color: var(--accent); font-family: inherit; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; background: none; border: none; cursor: pointer; padding: 4px 12px;">Clear All Filters</button>
 </div>
 
-<!-- FILTER BAR -->
+<!-- FILTER BAR (Redesigned) -->
 <div class="filter-bar">
-  <div class="filter-nav">
-    <button class="filter-toggle" data-panel="panelFellowship" data-key="fellowship" onclick="handleFilterToggle(this)">
-      Type <span class="count" style="display:none"></span> <span class="arrow"><svg viewBox="0 0 10 16" width="8" height="12" fill="currentColor"><path d="M2 0l8 8-8 8z"/></svg></span>
-    </button>
-    <button class="filter-toggle" data-panel="panelFormat" data-key="format" onclick="handleFilterToggle(this)">
-      Format <span class="count" style="display:none"></span> <span class="arrow"><svg viewBox="0 0 10 16" width="8" height="12" fill="currentColor"><path d="M2 0l8 8-8 8z"/></svg></span>
-    </button>
-    <button class="filter-toggle" data-panel="panelGender" data-key="gender" onclick="handleFilterToggle(this)">
-      Gender <span class="count" style="display:none"></span> <span class="arrow"><svg viewBox="0 0 10 16" width="8" height="12" fill="currentColor"><path d="M2 0l8 8-8 8z"/></svg></span>
-    </button>
-    <button class="filter-toggle" data-panel="panelAccess" data-key="access" onclick="handleFilterToggle(this)">
-      Access <span class="count" style="display:none"></span> <span class="arrow"><svg viewBox="0 0 10 16" width="8" height="12" fill="currentColor"><path d="M2 0l8 8-8 8z"/></svg></span>
-    </button>
-    <button class="filter-toggle" data-panel="panelPlace" data-key="place" onclick="handleFilterToggle(this)">
-      Place <span class="count" style="display:none"></span> <span class="arrow"><svg viewBox="0 0 10 16" width="8" height="12" fill="currentColor"><path d="M2 0l8 8-8 8z"/></svg></span>
-    </button>
+  <!-- Tab headers -->
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-tab="type" onclick="switchFilterTab('type')">Meeting Type</button>
+    <button class="filter-tab" data-tab="format" onclick="switchFilterTab('format')">Meeting Format</button>
+    <button class="filter-tab" data-tab="location" onclick="switchFilterTab('location')">Location</button>
+  </div>
+
+  <!-- Inline toggle rows: Access + Gender -->
+  <div class="filter-toggles-row">
+    <div class="filter-pill-group">
+      <button class="filter-pill active" onclick="setAccessFilter(this, '')" data-val="">All</button>
+      <button class="filter-pill" onclick="setAccessFilter(this, 'Anyone Welcome')" data-val="Anyone Welcome">Open</button>
+      <button class="filter-pill" onclick="setAccessFilter(this, 'Members Only')" data-val="Members Only">Closed</button>
+    </div>
+    <div class="filter-pill-group">
+      <button class="filter-pill active" onclick="setGenderFilter(this, '')" data-val="">All</button>
+      <button class="filter-pill" onclick="setGenderFilter(this, 'Men')" data-val="Men">Mens</button>
+      <button class="filter-pill" onclick="setGenderFilter(this, 'Women')" data-val="Women">Womens</button>
+    </div>
+  </div>
+
+  <!-- Clear button -->
+  <div class="filter-clear-row">
+    <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+  </div>
+
+  <!-- Tab panels -->
+  <div class="filter-tab-panel active" id="filterTabType">
+    <div class="chip-wrap" id="chipsFellowship"></div>
+  </div>
+  <div class="filter-tab-panel" id="filterTabFormat">
+    <div class="chip-wrap" id="chipsFormat"></div>
+  </div>
+  <div class="filter-tab-panel" id="filterTabLocation">
+    <div class="chip-wrap" id="chipsPlace"></div>
   </div>
 </div>
 
-<!-- UNIFIED CHIP PANEL (Desktop) -->
-<div class="chip-panel" id="chipPanelUnified">
-  <div class="chip-panel-inner" id="chipPanelInner">
-    <div class="chip-panel-header">
-      <span class="chip-panel-title" id="chipPanelTitle"></span>
-      <button class="chip-clear" id="chipPanelClear">Clear</button>
-    </div>
-    <div class="chip-wrap" id="chipPanelChips"></div>
-  </div>
-</div>
-<!-- Hidden chip containers populated on init -->
+<!-- Hidden chip containers for gender/access (still used by JS) -->
 <div style="display:none">
-  <div id="chipsFellowship"></div>
-  <div id="chipsFormat"></div>
   <div id="chipsGender"></div>
   <div id="chipsAccess"></div>
-  <div id="chipsPlace"></div>
 </div>
 
-<!-- MOBILE BOTTOM SHEET -->
+<!-- MOBILE BOTTOM SHEET (kept for deep-tap if needed) -->
 <div class="bottom-sheet-overlay" id="bottomSheetOverlay" onclick="closeBottomSheet()"></div>
 <div class="bottom-sheet" id="bottomSheet">
   <div class="bottom-sheet-handle"></div>
@@ -8771,10 +8778,6 @@ function buildChips() {
   buildChipGroup("chipsGender", GENDERS, "gender");
   buildChipGroup("chipsAccess", ACCESS_TYPES.filter(a => usedAccess.has(a)), "access");
   buildChipGroup("chipsPlace", getBaseLocations(), "place");
-  // Refresh unified panel if it's currently open
-  if (activeFilterKey) {
-    populateUnifiedPanel(activeFilterKey);
-  }
 }
 
 function buildChipGroup(containerId, items, filterKey) {
@@ -8799,20 +8802,8 @@ function buildChipGroup(containerId, items, filterKey) {
   });
 }
 
-// === FILTER PANEL TOGGLES ===
-function handleFilterToggle(btn) {
-  togglePanel(btn);
-}
-
+// === FILTER TAB & PILL SYSTEM ===
 var activeFilterKey = null;
-
-var filterTitles = {
-  fellowship: "Select Meeting Types",
-  format: "Select Formats",
-  gender: "Select Gender",
-  access: "Who Can Attend",
-  place: "Select Location"
-};
 
 var filterChipIds = {
   fellowship: "chipsFellowship",
@@ -8822,83 +8813,60 @@ var filterChipIds = {
   place: "chipsPlace"
 };
 
-function populateUnifiedPanel(key) {
-  var title = document.getElementById("chipPanelTitle");
-  var clearBtn = document.getElementById("chipPanelClear");
-  var chipsTarget = document.getElementById("chipPanelChips");
-  var sourceChips = document.getElementById(filterChipIds[key]);
-
-  title.textContent = filterTitles[key];
-  clearBtn.onclick = function() { clearFilter(key); };
-  // Clone chips from hidden source into the visible panel
-  chipsTarget.innerHTML = sourceChips.innerHTML;
-  // Re-bind click handlers
-  chipsTarget.querySelectorAll(".chip").forEach(function(chip) {
-    var item = chip.textContent;
-    chip.onclick = function() {
-      if (filters[key].has(item)) {
-        filters[key].delete(item);
-        chip.classList.remove("selected");
-      } else {
-        filters[key].add(item);
-        chip.classList.add("selected");
-      }
-      // Sync back to hidden source
-      var src = document.getElementById(filterChipIds[key]);
-      src.querySelectorAll(".chip").forEach(function(s) {
-        if (s.textContent === item) s.className = chip.className;
-      });
-      updateFilterToggles();
-      render();
-    };
+function switchFilterTab(tab) {
+  // Update tab buttons
+  document.querySelectorAll('.filter-tab').forEach(function(t) {
+    t.classList.toggle('active', t.getAttribute('data-tab') === tab);
   });
-  activeFilterKey = key;
+  // Show/hide panels
+  document.getElementById('filterTabType').classList.toggle('active', tab === 'type');
+  document.getElementById('filterTabFormat').classList.toggle('active', tab === 'format');
+  document.getElementById('filterTabLocation').classList.toggle('active', tab === 'location');
 }
 
-function togglePanel(btn) {
-  var key = btn.getAttribute("data-key");
-  var panel = document.getElementById("chipPanelUnified");
-  var inner = document.getElementById("chipPanelInner");
-  var isCurrentKey = (activeFilterKey === key);
-  var isOpen = panel.classList.contains("open");
-
-  // Update toggle button states
-  document.querySelectorAll(".filter-toggle").forEach(function(b) { b.classList.remove("open"); });
-
-  if (isOpen && isCurrentKey) {
-    // Close the panel
-    panel.classList.remove("open");
-    activeFilterKey = null;
-  } else if (isOpen && !isCurrentKey) {
-    // Fade out old content, swap, smoothly resize, fade in
-    btn.classList.add("open");
-    var oldHeight = inner.scrollHeight;
-    inner.style.height = oldHeight + "px";
-    inner.classList.add("fading");
-    setTimeout(function() {
-      // Swap content while faded out
-      populateUnifiedPanel(key);
-      // Measure new content height with height temporarily auto
-      inner.style.transition = "none";
-      inner.style.height = "auto";
-      var newHeight = inner.scrollHeight;
-      // Pin back to old height so we can animate from it
-      inner.style.height = oldHeight + "px";
-      inner.offsetHeight; // force reflow
-      // Restore transition and animate to new height
-      inner.style.transition = "";
-      inner.style.height = newHeight + "px";
-      inner.classList.remove("fading");
-      // Clean up fixed height after transition
-      setTimeout(function() { inner.style.height = ""; }, 250);
-    }, 130);
-  } else {
-    // Open from closed
-    btn.classList.add("open");
-    populateUnifiedPanel(key);
-    panel.classList.add("open");
-  }
+function setAccessFilter(btn, value) {
+  // Update pill UI
+  btn.closest('.filter-pill-group').querySelectorAll('.filter-pill').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  btn.classList.add('active');
+  // Update filter
+  filters.access.clear();
+  if (value) filters.access.add(value);
+  render();
 }
+
+function setGenderFilter(btn, value) {
+  // Update pill UI
+  btn.closest('.filter-pill-group').querySelectorAll('.filter-pill').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  btn.classList.add('active');
+  // Update filter
+  filters.gender.clear();
+  if (value) filters.gender.add(value);
+  render();
+}
+
+function clearAllFilters() {
+  Object.keys(filters).forEach(function(key) { filters[key].clear(); });
+  // Reset pill toggles to "All"
+  document.querySelectorAll('.filter-pill-group').forEach(function(g) {
+    g.querySelectorAll('.filter-pill').forEach(function(p, i) {
+      p.classList.toggle('active', i === 0);
+    });
+  });
+  // Reset chip selections
+  document.querySelectorAll('.chip.selected').forEach(function(c) {
+    c.classList.remove('selected');
+  });
+  render();
+}
+
+// Legacy compat — old code may call these
+function handleFilterToggle() {}
+function togglePanel() {}
+function populateUnifiedPanel() {}
 
 // === MOBILE BOTTOM SHEET ===
 let activeBottomSheetKey = null;
@@ -8969,47 +8937,20 @@ function closeBottomSheet() {
 }
 
 function updateFilterToggles() {
-  const mapping = {
-    panelFellowship: "fellowship",
-    panelFormat: "format",
-    panelGender: "gender",
-    panelAccess: "access",
-    panelPlace: "place"
-  };
-  let anyActive = false;
-  document.querySelectorAll(".filter-toggle").forEach(btn => {
-    const panelId = btn.getAttribute("data-panel");
-    const key = mapping[panelId];
-    const count = filters[key].size;
-    const countEl = btn.querySelector(".count");
-    if (count > 0) {
-      btn.classList.add("has-selection");
-      countEl.textContent = count;
-      countEl.style.display = "";
-      anyActive = true;
-    } else {
-      btn.classList.remove("has-selection");
-      countEl.style.display = "none";
-    }
-  });
-  const clearWrap = document.getElementById("clearAllFiltersWrap");
-  if (clearWrap) clearWrap.style.visibility = anyActive ? "visible" : "hidden";
+  // No-op in new tab design — pill/chip states are updated inline
 }
 
 function clearFilter(key) {
   filters[key].clear();
   buildChips();
-  updateFilterToggles();
-  render();
-}
-
-function clearAllFilters() {
-  Object.keys(filters).forEach(k => filters[k].clear());
-  buildChips();
-  updateFilterToggles();
-  document.getElementById("chipPanelUnified").classList.remove("open");
-  activeFilterKey = null;
-  document.querySelectorAll(".filter-toggle").forEach(b => b.classList.remove("open"));
+  // Reset pill UI if access or gender
+  if (key === 'access' || key === 'gender') {
+    document.querySelectorAll('.filter-pill-group').forEach(function(g) {
+      g.querySelectorAll('.filter-pill').forEach(function(p, i) {
+        p.classList.toggle('active', i === 0);
+      });
+    });
+  }
   render();
 }
 
