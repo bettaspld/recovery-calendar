@@ -8249,9 +8249,8 @@ function adminTestEmail(type) {
     ? 'My Recovery Meetings — ' + MONTH_NAMES[startDate.getMonth()] + ' ' + startDate.getDate() + '–' + endDate.getDate() + ', ' + endDate.getFullYear()
     : 'My Recovery Meetings — ' + MONTH_NAMES[startDate.getMonth()] + ' ' + startDate.getFullYear();
 
-  // Build HTML rows — 2-col layout to stay under EmailJS 50KB variable limit
+  // Build HTML rows — ultra-compact to stay under EmailJS 50KB variable limit
   var htmlBody = '';
-  var textBody = '';
   var meetingCount = 0;
   var ca = c.accent, ci = c.ink, cf = c.ink_faint;
   var daysToShow = isWeek ? 7 : ((endDate - startDate) / 86400000) + 1;
@@ -8262,31 +8261,36 @@ function adminTestEmail(type) {
     var dayMeetings = sampleMeetings.filter(function(m) { return m.day == dow; });
     if (dayMeetings.length === 0) continue;
     dayMeetings.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
-    var dayLabel = DAY_NAMES_FULL[dow] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate();
-    htmlBody += '<tr><td colspan="2" style="padding:14px 0 4px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + ca + ';border-bottom:1px solid #eee">' + dayLabel + '</td></tr>';
-    textBody += dayLabel + '\n';
+    var dl = DAY_NAMES_FULL[dow] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate();
+    htmlBody += '<tr><td colspan="2" style="padding:12px 0 3px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + ca + ';border-bottom:1px solid #eee">' + dl + '</td></tr>';
     dayMeetings.forEach(function(m) {
-      var time = typeof formatTime === 'function' ? formatTime(m.time) : m.time;
-      htmlBody += '<tr><td style="padding:5px 0;color:' + cf + ';width:55px;font-size:13px">' + time + '</td><td style="padding:5px 0;font-size:13px"><b style="color:' + ci + '">' + m.name + '</b>' + (m.fellowship ? ' <span style="color:' + cf + '">(' + m.fellowship + ')</span>' : '') + (m.location ? '<br><span style="font-size:12px;color:' + cf + '">' + m.location + '</span>' : '') + '</td></tr>';
-      textBody += '  ' + time + ' — ' + m.name + (m.fellowship ? ' (' + m.fellowship + ')' : '') + (m.location ? ' @ ' + m.location : '') + '\n';
+      var t = typeof formatTime === 'function' ? formatTime(m.time) : m.time;
+      htmlBody += '<tr><td style="padding:4px 0;color:' + cf + ';width:50px;font-size:13px">' + t + '</td><td style="padding:4px 0;font-size:13px"><b style="color:' + ci + '">' + m.name + '</b>' + (m.fellowship ? ' <span style="color:' + cf + '">(' + m.fellowship + ')</span>' : '') + '</td></tr>';
       meetingCount++;
     });
-    textBody += '\n';
   }
 
-  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_SCHEDULE_TEMPLATE, {
+  // Check size — EmailJS has a 50KB limit on total variables
+  var payload = {
     to_email: email,
     user_name: userName,
     subject: subject,
-    meetings_list: textBody,
+    meetings_list: '',
     meetings_html: htmlBody,
     meeting_count: meetingCount,
     view_label: isWeek ? 'Week' : 'Month',
-    color_accent: c.accent,
-    color_ink: c.ink,
-    color_ink_faint: c.ink_faint,
+    color_accent: ca,
+    color_ink: ci,
+    color_ink_faint: cf,
     color_paper: c.paper
-  }).then(function() {
+  };
+  var payloadSize = JSON.stringify(payload).length;
+  if (payloadSize > 48000) {
+    adminEmailError('Payload too large (' + Math.round(payloadSize/1024) + 'KB). Try Week view or reduce meetings.', '50KB EmailJS limit');
+    return;
+  }
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_SCHEDULE_TEMPLATE, payload).then(function() {
     statusEl.textContent = (isWeek ? 'Week' : 'Month') + ' schedule sent to ' + email;
     adminEmailDone();
   }).catch(function(e) {
