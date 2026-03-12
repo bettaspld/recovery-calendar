@@ -8269,10 +8269,12 @@ function adminTestEmail(type) {
       dm.forEach(function(m) {
         var t = typeof formatTime === 'function' ? formatTime(m.time) : m.time;
         var fs = m.fellowship ? fShort(m.fellowship) : '';
+        var link = m.id ? 'https://recoverycalendar.app?meeting=' + m.id : '';
+        var nameHtml = link ? '<a href="' + link + '" style="color:' + colors.i + ';text-decoration:none;font-weight:600">' + m.name + '</a>' : '<b style="color:' + colors.i + '">' + m.name + '</b>';
         if (detail && fs) {
-          h += '<tr><td style="padding:4px 0 4px 8px;font-size:13px;border-left:2px solid #eee"><span style="color:' + colors.f + ';font-size:12px">' + t + '</span> &nbsp;<b style="color:' + colors.i + '">' + m.name + '</b> <span style="color:' + colors.f + ';font-size:11px">' + fs + '</span></td></tr>';
+          h += '<tr><td style="padding:4px 0 4px 8px;font-size:13px;border-left:2px solid #eee"><span style="color:' + colors.f + ';font-size:12px">' + t + '</span> &nbsp;' + nameHtml + ' <span style="color:' + colors.f + ';font-size:11px">' + fs + '</span></td></tr>';
         } else {
-          h += '<tr><td style="padding:3px 0 3px 8px;font-size:13px;border-left:2px solid #eee"><span style="color:' + colors.f + ';font-size:12px">' + t + '</span> &nbsp;<b style="color:' + colors.i + '">' + m.name + '</b></td></tr>';
+          h += '<tr><td style="padding:3px 0 3px 8px;font-size:13px;border-left:2px solid #eee"><span style="color:' + colors.f + ';font-size:12px">' + t + '</span> &nbsp;' + nameHtml + '</td></tr>';
         }
         cnt++;
       });
@@ -11242,7 +11244,9 @@ function emailViewSchedule() {
     htmlBody += '<tr><td colspan="2" style="padding:14px 0 4px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + ca + ';border-bottom:1px solid #eee">' + dayName + ', ' + monthName + ' ' + g.date.getDate() + '</td></tr>';
     g.meetings.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
     g.meetings.forEach(function(m) {
-      htmlBody += '<tr><td style="padding:5px 0;color:' + cf + ';width:55px;font-size:13px">' + formatTime(m.time) + '</td><td style="padding:5px 0;font-size:13px"><b style="color:' + ci + '">' + (m.name || '') + '</b>' + (m.fellowship ? ' <span style="color:' + cf + '">(' + m.fellowship + ')</span>' : '') + (m.location ? '<br><span style="font-size:12px;color:' + cf + '">' + m.location + '</span>' : '') + '</td></tr>';
+      var link = m.id ? 'https://recoverycalendar.app?meeting=' + m.id : '';
+      var nameHtml = link ? '<a href="' + link + '" style="color:' + ci + ';text-decoration:none;font-weight:600">' + (m.name || '') + '</a>' : '<b style="color:' + ci + '">' + (m.name || '') + '</b>';
+      htmlBody += '<tr><td style="padding:5px 0;color:' + cf + ';width:55px;font-size:13px">' + formatTime(m.time) + '</td><td style="padding:5px 0;font-size:13px">' + nameHtml + (m.fellowship ? ' <span style="color:' + cf + '">(' + m.fellowship + ')</span>' : '') + (m.location ? '<br><span style="font-size:12px;color:' + cf + '">' + m.location + '</span>' : '') + '</td></tr>';
     });
   });
 
@@ -11646,6 +11650,28 @@ function applyUrlParams() {
       box.classList.add('open');
       setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
     }
+  }
+  // Deep link to a specific meeting from email
+  if (params.has('meeting')) {
+    var mid = params.get('meeting');
+    // Wait for meetings to load, then open the detail card
+    function _tryOpenMeeting(attempts) {
+      if (attempts <= 0) return;
+      var m = meetings.find(function(x) { return x.id === mid; });
+      if (m) {
+        // Build a date for the next occurrence of this meeting's day
+        var today = new Date();
+        var diff = (m.day - today.getDay() + 7) % 7;
+        var nextDate = new Date(today);
+        nextDate.setDate(today.getDate() + diff);
+        openMeetingDetail(mid, nextDate);
+        // Clean the URL
+        window.history.replaceState({}, '', window.location.pathname);
+      } else {
+        setTimeout(function() { _tryOpenMeeting(attempts - 1); }, 500);
+      }
+    }
+    setTimeout(function() { _tryOpenMeeting(10); }, 800);
   }
 }
 
