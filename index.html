@@ -8249,10 +8249,11 @@ function adminTestEmail(type) {
     ? 'My Recovery Meetings — ' + MONTH_NAMES[startDate.getMonth()] + ' ' + startDate.getDate() + '–' + endDate.getDate() + ', ' + endDate.getFullYear()
     : 'My Recovery Meetings — ' + MONTH_NAMES[startDate.getMonth()] + ' ' + startDate.getFullYear();
 
-  // Build HTML table rows
+  // Build HTML rows — 2-col layout to stay under EmailJS 50KB variable limit
   var htmlBody = '';
   var textBody = '';
   var meetingCount = 0;
+  var ca = c.accent, ci = c.ink, cf = c.ink_faint;
   var daysToShow = isWeek ? 7 : ((endDate - startDate) / 86400000) + 1;
   for (var i = 0; i < daysToShow; i++) {
     var d = new Date(startDate);
@@ -8262,13 +8263,11 @@ function adminTestEmail(type) {
     if (dayMeetings.length === 0) continue;
     dayMeetings.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
     var dayLabel = DAY_NAMES_FULL[dow] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate();
-    htmlBody += '<tr><td style="padding:16px 0 6px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + c.accent + ';border-bottom:1px solid #eee;" colspan="3">' + dayLabel + '</td></tr>';
+    htmlBody += '<tr><td colspan="2" style="padding:14px 0 4px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + ca + ';border-bottom:1px solid #eee">' + dayLabel + '</td></tr>';
     textBody += dayLabel + '\n';
     dayMeetings.forEach(function(m) {
       var time = typeof formatTime === 'function' ? formatTime(m.time) : m.time;
-      htmlBody += '<tr><td style="padding:8px 0;font-size:13px;color:' + c.ink_faint + ';white-space:nowrap;vertical-align:top;width:70px;">' + time + '</td>';
-      htmlBody += '<td style="padding:8px 8px;font-size:13px;font-weight:600;color:' + c.ink + ';vertical-align:top;">' + m.name + (m.fellowship ? ' <span style="font-weight:400;color:' + c.ink_faint + ';">(' + m.fellowship + ')</span>' : '') + '</td>';
-      htmlBody += '<td style="padding:8px 0;font-size:12px;color:' + c.ink_faint + ';vertical-align:top;">' + (m.location || '') + '</td></tr>';
+      htmlBody += '<tr><td style="padding:5px 0;color:' + cf + ';width:55px;font-size:13px">' + time + '</td><td style="padding:5px 0;font-size:13px"><b style="color:' + ci + '">' + m.name + '</b>' + (m.fellowship ? ' <span style="color:' + cf + '">(' + m.fellowship + ')</span>' : '') + (m.location ? '<br><span style="font-size:12px;color:' + cf + '">' + m.location + '</span>' : '') + '</td></tr>';
       textBody += '  ' + time + ' — ' + m.name + (m.fellowship ? ' (' + m.fellowship + ')' : '') + (m.location ? ' @ ' + m.location : '') + '\n';
       meetingCount++;
     });
@@ -11206,19 +11205,18 @@ function emailViewSchedule() {
 
   var userEmail = (currentUser && currentUser.email) ? currentUser.email : '';
 
-  // Build HTML version for EmailJS template
+  // Build HTML version for EmailJS template (compact styles to stay under 50KB limit)
   var c = getEmailThemeColors();
   var htmlBody = '';
+  var ca = c.accent, ci = c.ink, cf = c.ink_faint;
   dayKeys.forEach(function(key) {
     var g = grouped[key];
     var dayName = DAY_NAMES_FULL[g.date.getDay()];
     var monthName = MONTH_NAMES[g.date.getMonth()];
-    htmlBody += '<tr><td style="padding:16px 0 6px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + c.accent + ';border-bottom:1px solid #eee;" colspan="3">' + dayName + ', ' + monthName + ' ' + g.date.getDate() + '</td></tr>';
+    htmlBody += '<tr><td colspan="2" style="padding:14px 0 4px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + ca + ';border-bottom:1px solid #eee">' + dayName + ', ' + monthName + ' ' + g.date.getDate() + '</td></tr>';
     g.meetings.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
     g.meetings.forEach(function(m) {
-      htmlBody += '<tr><td style="padding:8px 0;font-size:13px;color:' + c.ink_faint + ';white-space:nowrap;vertical-align:top;width:70px;">' + formatTime(m.time) + '</td>';
-      htmlBody += '<td style="padding:8px 8px;font-size:13px;font-weight:600;color:' + c.ink + ';vertical-align:top;">' + (m.name || '') + (m.fellowship ? ' <span style="font-weight:400;color:' + c.ink_faint + ';">(' + m.fellowship + ')</span>' : '') + '</td>';
-      htmlBody += '<td style="padding:8px 0;font-size:12px;color:' + c.ink_faint + ';vertical-align:top;">' + (m.location || '') + '</td></tr>';
+      htmlBody += '<tr><td style="padding:5px 0;color:' + cf + ';width:55px;font-size:13px">' + formatTime(m.time) + '</td><td style="padding:5px 0;font-size:13px"><b style="color:' + ci + '">' + (m.name || '') + '</b>' + (m.fellowship ? ' <span style="color:' + cf + '">(' + m.fellowship + ')</span>' : '') + (m.location ? '<br><span style="font-size:12px;color:' + cf + '">' + m.location + '</span>' : '') + '</td></tr>';
     });
   });
 
