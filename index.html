@@ -11463,6 +11463,7 @@ async function findLocalMeetingsSearch() {
       }
     }
 
+    console.log('[FLM DEBUG] useGeo:', useGeo, 'isZip:', isZip, 'useResolved:', useResolved, 'loc:', loc);
     if (useGeo || isZip || useResolved) {
       try {
         let searchBody;
@@ -11485,12 +11486,14 @@ async function findLocalMeetingsSearch() {
           if (programMap[typeVal]) searchBody.program = programMap[typeVal];
         }
         searchBody.limit = 500;
+        console.log('[FLM DEBUG] searchBody:', JSON.stringify(searchBody));
         const aggRes = await fetch('https://meeting-aggregator.netlify.app/api/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(searchBody)
         });
         const aggData = await aggRes.json();
+        console.log('[FLM DEBUG] aggData:', JSON.stringify({ success: aggData.success, count: aggData.results?.length, stats: aggData.stats }));
         if (aggData.success && aggData.results && aggData.results.length > 0) {
           // Map aggregator fields to PWA format
           data = {
@@ -11626,7 +11629,13 @@ async function findLocalMeetingsSearch() {
       return;
     }
 
-    displayFlmResults(filterFlmResults(data.results), data.location, data.stats);
+    var filtered = filterFlmResults(data.results);
+    console.log('[FLM DEBUG] pre-filter:', data.results?.length, 'post-filter:', filtered?.length);
+    if (data.results?.length > 0 && (!filtered || filtered.length === 0)) {
+      console.log('[FLM DEBUG] FILTER KILLED ALL RESULTS. First result:', JSON.stringify(data.results[0]));
+      console.log('[FLM DEBUG] typeFilter:', document.getElementById('flmType').value);
+    }
+    displayFlmResults(filtered, data.location, data.stats);
 
   } catch (err) {
     const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
