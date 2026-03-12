@@ -2247,17 +2247,46 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: var(--paper);
+    background: rgba(44, 36, 22, 0.6);
     z-index: 200;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
-  .onboard-overlay.active { display: block; }
+  .onboard-overlay.active {
+    display: flex;
+    animation: modalOverlayIn 0.25s ease forwards;
+  }
   .onboard-inner {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    width: 100%;
     max-width: 520px;
-    margin: 0 auto;
-    padding: 40px 28px 60px;
+    max-height: 88vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 36px 28px 40px;
+    animation: modalScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
   }
+  .onboard-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.15s;
+  }
+  .onboard-close:hover { color: var(--ink); }
   .onboard-header {
     text-align: center;
     margin-bottom: 32px;
@@ -8277,8 +8306,9 @@
 </div>
 
 <!-- GETTING STARTED ONBOARDING -->
-<div class="onboard-overlay" id="onboardOverlay">
+<div class="onboard-overlay" id="onboardOverlay" onclick="if(event.target===this)closeOnboarding()">
   <div class="onboard-inner">
+    <button class="onboard-close" onclick="closeOnboarding()" aria-label="Close">&times;</button>
     <div class="onboard-header">
       <div class="onboard-title">Recovery Calendar</div>
       <div class="onboard-subtitle">Your Personal Recovery Meeting Planner</div>
