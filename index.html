@@ -2389,11 +2389,59 @@
     display: flex;
     gap: 8px;
     align-items: stretch;
+    position: relative;
   }
   .flm-location-row input {
     flex: 1;
     min-width: 0;
   }
+  .flm-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--white);
+    border: 1.5px solid var(--grid-line);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+  }
+  .flm-autocomplete.open { display: block; }
+  .flm-ac-item {
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--ink);
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .flm-ac-item:last-child { border-bottom: none; }
+  .flm-ac-item:hover, .flm-ac-item.active {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .flm-ac-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--ink-faint);
+  }
+  .flm-ac-text { flex: 1; min-width: 0; }
+  .flm-ac-primary { font-weight: 600; }
+  .flm-ac-secondary { color: var(--ink-faint); font-size: 10px; margin-left: 4px; }
+  .flm-resolved {
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 2px;
+    display: none;
+  }
+  .flm-resolved.visible { display: block; }
   .flm-locate-btn { display: none; }
   .flm-use-location-link {
     font-family: inherit;
@@ -2562,12 +2610,22 @@
     padding-top: 8px;
     border-top: 1px solid var(--grid-line);
   }
-  .flm-card-confidence {
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
+  .flm-details-btn {
+    padding: 5px 10px;
+    background: none;
     color: var(--ink-faint);
+    border: 1.5px solid var(--grid-line);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
   }
+  .flm-details-btn:hover { border-color: var(--ink-faint); color: var(--ink); }
   .flm-add-btn {
     padding: 6px 14px;
     background: var(--accent);
@@ -2584,6 +2642,27 @@
     white-space: nowrap;
   }
   .flm-add-btn:hover { background: var(--accent-dark); }
+  .flm-add-btn.flm-added {
+    background: #22c55e;
+    cursor: default;
+  }
+  .flm-card-details {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    border-radius: calc(var(--radius) - 2px);
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .flm-detail-row { margin-bottom: 2px; }
+  .flm-detail-row strong {
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
   .flm-card-header {
     display: flex;
     align-items: flex-start;
@@ -3100,7 +3179,7 @@
     margin-top: 0;
   }
   .about-box.open {
-    max-height: 3000px;
+    max-height: 5000px;
     opacity: 1;
     margin-top: 20px;
   }
@@ -3159,6 +3238,78 @@
     line-height: 1.5;
     color: rgba(255,255,255,0.45);
   }
+  .about-section-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 24px 0;
+  }
+  .about-sub-heading {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .about-sources-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 600px) {
+    .about-sources-grid { grid-template-columns: 1fr; }
+  }
+  .about-source-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px;
+  }
+  .about-source-badge {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .about-source-badge.aa { background: rgba(59,130,246,0.2); color: rgba(147,197,253,0.9); }
+  .about-source-badge.na { background: rgba(168,85,247,0.2); color: rgba(216,180,254,0.9); }
+  .about-source-badge.rd { background: rgba(234,179,8,0.2); color: rgba(253,224,71,0.9); }
+  .about-source-badge.other { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+  .about-source-text {
+    font-size: 9.5px;
+    line-height: 1.4;
+    color: rgba(255,255,255,0.45);
+  }
+  .about-source-text strong {
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+  }
+  .about-tech-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 14px;
+  }
+  @media (max-width: 600px) {
+    .about-tech-list { grid-template-columns: 1fr; }
+  }
+  .about-tech-item {
+    font-size: 9.5px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.4);
+    padding: 4px 0;
+  }
+  .about-tech-item strong {
+    color: rgba(255,255,255,0.65);
+    font-weight: 600;
+  }
   .about-footer-note {
     text-align: center;
     font-size: 9px;
@@ -3168,6 +3319,31 @@
     letter-spacing: 0.5px;
   }
 
+  .footer-meeting-count {
+    text-align: center;
+    margin-top: 18px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+  }
+  .fmc-number {
+    display: block;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--accent, rgba(255,255,255,0.85));
+    line-height: 1.2;
+  }
+  .fmc-label {
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+  }
   .footer-crisis {
     font-size: 10px;
     color: rgba(255,255,255,0.4);
@@ -5771,13 +5947,13 @@
     <div class="nav-dropdown" id="navAddDropdown">
       <button class="nav-text-link nav-dropdown-trigger" onclick="toggleAddDropdown(event)">Add Meetings <span class="nav-dd-arrow">&#9662;</span></button>
       <div class="nav-dropdown-menu nav-add-menu" id="addDropdownMenu">
-        <button class="nav-dd-item" onclick="openModal(); closeNavMenu(); closeAddDropdown()">
-          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
-          Manually Add
-        </button>
         <button class="nav-dd-item" onclick="openFindMeetings(); closeNavMenu(); closeAddDropdown()">
           <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.5" y1="12.5" x2="17" y2="17"/></svg>
           Find Nearby
+        </button>
+        <button class="nav-dd-item" onclick="openModal(); closeNavMenu(); closeAddDropdown()">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
+          Manually Add
         </button>
         <button class="nav-dd-item" onclick="document.getElementById('uploadInput').click(); closeNavMenu(); closeAddDropdown()">
           <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 15v2a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2h2"/><polyline points="12 3 16 3 16 7"/><line x1="8" y1="12" x2="16" y2="3"/></svg>
@@ -5785,6 +5961,8 @@
         </button>
       </div>
     </div>
+    <span class="nav-text-sep">|</span>
+    <button class="nav-text-link" onclick="openFindMeetings(); closeNavMenu()">Find Meetings</button>
     <span class="nav-text-sep">|</span>
     <div class="nav-dropdown" id="navSettingsDropdown">
       <button class="nav-text-link nav-dropdown-trigger" id="settingsDropdownTrigger" onclick="toggleSettingsDropdown(event)"><span id="settingsDropdownLabel">Settings</span> <span class="nav-dd-arrow">&#9662;</span></button>
@@ -6860,6 +7038,41 @@
           </div>
 
         </div>
+
+        <hr class="about-section-divider">
+        <div class="about-sub-heading">Meeting Finder Sources</div>
+        <div class="about-sources-grid">
+          <div class="about-source-item">
+            <span class="about-source-badge aa">AA</span>
+            <div class="about-source-text"><strong>178 AA Intergroup Feeds</strong> — Local central offices and intergroups across all 50 states + DC, via the 12 Step Meeting List (TSML) WordPress plugin.</div>
+          </div>
+          <div class="about-source-item">
+            <span class="about-source-badge na">NA</span>
+            <div class="about-source-text"><strong>BMLT Tomato Server</strong> — The Basic Meeting List Toolbox aggregates all Narcotics Anonymous meetings in the US, queried state-by-state for complete coverage.</div>
+          </div>
+          <div class="about-source-item">
+            <span class="about-source-badge rd">RD</span>
+            <div class="about-source-text"><strong>Recovery Dharma National</strong> — Buddhist-inspired mindfulness recovery meetings pulled from their national TSML feed.</div>
+          </div>
+          <div class="about-source-item">
+            <span class="about-source-badge other">+</span>
+            <div class="about-source-text"><strong>Local Sources</strong> — SMART Recovery, Celebrate Recovery, Al-Anon, and community facility listings for select regions. More fellowships will be added as public APIs become available.</div>
+          </div>
+        </div>
+
+        <hr class="about-section-divider">
+        <div class="about-sub-heading">Built With</div>
+        <div class="about-tech-list">
+          <div class="about-tech-item"><strong>Vanilla HTML / CSS / JS</strong> — Single-file PWA, no frameworks or build tools</div>
+          <div class="about-tech-item"><strong>Firebase</strong> — Auth, Realtime Database for cross-device sync</div>
+          <div class="about-tech-item"><strong>Service Worker</strong> — Offline support and home screen install</div>
+          <div class="about-tech-item"><strong>OpenAI API</strong> — AI-powered search and "What to Expect" guides</div>
+          <div class="about-tech-item"><strong>Netlify</strong> — Hosting, edge functions, and email delivery</div>
+          <div class="about-tech-item"><strong>Meeting Aggregator</strong> — Node.js + Prisma + Neon Postgres backend</div>
+          <div class="about-tech-item"><strong>BMLT &amp; TSML Parsers</strong> — Custom parsers for NA and AA meeting feeds</div>
+          <div class="about-tech-item"><strong>iCal Export</strong> — Standards-compliant .ics generation for calendar apps</div>
+        </div>
+
         <div class="about-footer-note">Your data stays on your device unless you sign in to sync. No data is collected or shared. Built for the recovery community with care.</div>
       </div>
     </div>
@@ -6867,6 +7080,11 @@
     <div class="footer-sync-status" id="syncStatus">
       <span class="sync-dot"></span>
       <span class="sync-label" id="syncLabel">Offline — using local data</span>
+    </div>
+
+    <div class="footer-meeting-count" id="footerMeetingCount" style="display:none;">
+      <span class="fmc-number" id="fmcNumber">0</span>
+      <span class="fmc-label">recovery meetings indexed across the US</span>
     </div>
 
     <div class="footer-crisis">
@@ -7688,7 +7906,9 @@
           <label>City or Zip Code</label>
           <div class="flm-location-row">
             <input type="text" id="flmLocation" placeholder="e.g. Portland, OR or 97201" autocomplete="off">
+            <div class="flm-autocomplete" id="flmAutocomplete"></div>
           </div>
+          <div class="flm-resolved" id="flmResolved"></div>
           <button type="button" class="flm-use-location-link" id="flmLocateBtn" onclick="useMyLocation()">Use my location</button>
         </div>
         <div class="form-group">
@@ -10764,17 +10984,148 @@ function useMyLocation() {
   );
 }
 
-// Clear geo coords when user types a new location
+// ── City autocomplete via Nominatim geocoding ──
+var _flmAcTimer = null;
+var _flmAcIdx = -1;
+var _flmResolvedCoords = null; // { lat, lng, display }
+
 document.addEventListener('DOMContentLoaded', function() {
   var flmInput = document.getElementById('flmLocation');
-  if (flmInput) {
-    flmInput.addEventListener('input', function() {
-      if (flmGeoCoords && this.value !== 'Current Location') {
-        flmGeoCoords = null;
-      }
-    });
-  }
+  if (!flmInput) return;
+
+  flmInput.addEventListener('input', function() {
+    // Clear previous resolved location
+    if (flmGeoCoords && this.value !== 'Current Location') {
+      flmGeoCoords = null;
+    }
+    _flmResolvedCoords = null;
+    var resolved = document.getElementById('flmResolved');
+    if (resolved) { resolved.textContent = ''; resolved.classList.remove('visible'); }
+
+    var q = this.value.trim();
+    clearTimeout(_flmAcTimer);
+    if (q.length < 3 || /^\d{5}$/.test(q)) {
+      _flmCloseAutocomplete();
+      return;
+    }
+    _flmAcTimer = setTimeout(function() { _flmFetchSuggestions(q); }, 350);
+  });
+
+  flmInput.addEventListener('keydown', function(e) {
+    var ac = document.getElementById('flmAutocomplete');
+    var items = ac ? ac.querySelectorAll('.flm-ac-item') : [];
+    if (!items.length || !ac.classList.contains('open')) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      _flmAcIdx = Math.min(_flmAcIdx + 1, items.length - 1);
+      _flmHighlightAcItem(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      _flmAcIdx = Math.max(_flmAcIdx - 1, 0);
+      _flmHighlightAcItem(items);
+    } else if (e.key === 'Enter' && _flmAcIdx >= 0) {
+      e.preventDefault();
+      items[_flmAcIdx].click();
+    } else if (e.key === 'Escape') {
+      _flmCloseAutocomplete();
+    }
+  });
+
+  // Close autocomplete when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.flm-location-row')) _flmCloseAutocomplete();
+  });
 });
+
+function _flmFetchSuggestions(query) {
+  fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) +
+    '&format=json&limit=5&countrycodes=us&addressdetails=1', {
+    headers: { 'User-Agent': 'RecoveryCalendar/1.0 (https://recoverycalendar.app)' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(results) {
+    var ac = document.getElementById('flmAutocomplete');
+    if (!ac) return;
+    ac.innerHTML = '';
+    _flmAcIdx = -1;
+    if (!results || !results.length) { _flmCloseAutocomplete(); return; }
+
+    // Filter to cities/towns/places (not individual addresses)
+    var places = results.filter(function(r) {
+      return r.type === 'city' || r.type === 'town' || r.type === 'village' ||
+             r.type === 'hamlet' || r.type === 'administrative' || r.class === 'place' ||
+             r.class === 'boundary';
+    });
+    if (!places.length) places = results.slice(0, 5);
+
+    places.forEach(function(place) {
+      var item = document.createElement('div');
+      item.className = 'flm-ac-item';
+      var addr = place.address || {};
+      var city = addr.city || addr.town || addr.village || addr.hamlet || place.name || '';
+      var state = addr.state || '';
+      var stateAbbr = _flmStateAbbr(state);
+
+      item.innerHTML =
+        '<svg class="flm-ac-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+        '<span class="flm-ac-text">' +
+          '<span class="flm-ac-primary">' + escapeHTML(city) + '</span>' +
+          (stateAbbr ? '<span class="flm-ac-secondary">' + escapeHTML(stateAbbr) + '</span>' : '') +
+        '</span>';
+
+      item.addEventListener('click', function() {
+        var display = city + (stateAbbr ? ', ' + stateAbbr : '');
+        document.getElementById('flmLocation').value = display;
+        _flmResolvedCoords = {
+          lat: parseFloat(place.lat),
+          lng: parseFloat(place.lon),
+          display: display
+        };
+        var resolved = document.getElementById('flmResolved');
+        if (resolved) {
+          resolved.textContent = 'Searching near ' + display;
+          resolved.classList.add('visible');
+        }
+        _flmCloseAutocomplete();
+      });
+
+      ac.appendChild(item);
+    });
+
+    ac.classList.add('open');
+  })
+  .catch(function() { _flmCloseAutocomplete(); });
+}
+
+function _flmCloseAutocomplete() {
+  var ac = document.getElementById('flmAutocomplete');
+  if (ac) { ac.classList.remove('open'); ac.innerHTML = ''; }
+  _flmAcIdx = -1;
+}
+
+function _flmHighlightAcItem(items) {
+  items.forEach(function(it, i) {
+    it.classList.toggle('active', i === _flmAcIdx);
+  });
+}
+
+function _flmStateAbbr(stateName) {
+  var map = {
+    'Alabama':'AL','Alaska':'AK','Arizona':'AZ','Arkansas':'AR','California':'CA',
+    'Colorado':'CO','Connecticut':'CT','Delaware':'DE','District of Columbia':'DC',
+    'Florida':'FL','Georgia':'GA','Hawaii':'HI','Idaho':'ID','Illinois':'IL',
+    'Indiana':'IN','Iowa':'IA','Kansas':'KS','Kentucky':'KY','Louisiana':'LA',
+    'Maine':'ME','Maryland':'MD','Massachusetts':'MA','Michigan':'MI','Minnesota':'MN',
+    'Mississippi':'MS','Missouri':'MO','Montana':'MT','Nebraska':'NE','Nevada':'NV',
+    'New Hampshire':'NH','New Jersey':'NJ','New Mexico':'NM','New York':'NY',
+    'North Carolina':'NC','North Dakota':'ND','Ohio':'OH','Oklahoma':'OK','Oregon':'OR',
+    'Pennsylvania':'PA','Rhode Island':'RI','South Carolina':'SC','South Dakota':'SD',
+    'Tennessee':'TN','Texas':'TX','Utah':'UT','Vermont':'VT','Virginia':'VA',
+    'Washington':'WA','West Virginia':'WV','Wisconsin':'WI','Wyoming':'WY'
+  };
+  return map[stateName] || stateName;
+}
 
 async function findLocalMeetingsSearch() {
   const loc = document.getElementById('flmLocation').value.trim();
@@ -10799,15 +11150,30 @@ async function findLocalMeetingsSearch() {
     let data;
     let usedAggregator = false;
 
-    // Detect if location is a ZIP code (5 digits) or using geolocation
+    // Detect if location is a ZIP code (5 digits), geolocation, or resolved city
     const isZip = /^\d{5}$/.test(loc.trim());
     const useGeo = !!flmGeoCoords;
+    const useResolved = !!_flmResolvedCoords;
 
-    if (useGeo || isZip) {
+    // Show resolved label if we have coordinates
+    if (useResolved) {
+      var resolvedEl = document.getElementById('flmResolved');
+      if (resolvedEl) {
+        resolvedEl.textContent = 'Searching near ' + _flmResolvedCoords.display;
+        resolvedEl.classList.add('visible');
+      }
+    }
+
+    if (useGeo || isZip || useResolved) {
       try {
-        const searchBody = useGeo
-          ? { lat: flmGeoCoords.lat, lng: flmGeoCoords.lng, radiusKm: radiusKm }
-          : { zipCode: loc.trim(), radiusKm: radiusKm };
+        let searchBody;
+        if (useGeo) {
+          searchBody = { lat: flmGeoCoords.lat, lng: flmGeoCoords.lng, radiusKm: radiusKm };
+        } else if (useResolved) {
+          searchBody = { lat: _flmResolvedCoords.lat, lng: _flmResolvedCoords.lng, radiusKm: radiusKm };
+        } else {
+          searchBody = { zipCode: loc.trim(), radiusKm: radiusKm };
+        }
         const aggRes = await fetch('https://meeting-aggregator.netlify.app/api/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -10826,6 +11192,8 @@ async function findLocalMeetingsSearch() {
                           m.program === 'AA' ? 'Alcoholics Anonymous (AA)' :
                           m.program === 'SMART' ? 'SMART Recovery' :
                           m.program === 'Al-Anon' ? 'Al-Anon' :
+                          m.program === 'RECOVERY_DHARMA' ? 'Recovery Dharma' :
+                          m.program === 'CELEBRATE_RECOVERY' ? 'Celebrate Recovery' :
                           m.program || '',
               format: m.format || 'Discussion',
               access: m.access === 'Open' ? 'Anyone Welcome' :
@@ -10851,7 +11219,76 @@ async function findLocalMeetingsSearch() {
       }
     }
 
-    // Fall back to legacy Netlify function
+    // If we haven't used the aggregator yet (typed city name without selecting autocomplete),
+    // geocode the text first, then try the aggregator with lat/lng
+    if (!usedAggregator && !isZip) {
+      try {
+        var geoRes = await fetch('https://nominatim.openstreetmap.org/search?q=' +
+          encodeURIComponent(loc) + '&format=json&limit=1&countrycodes=us', {
+          headers: { 'User-Agent': 'RecoveryCalendar/1.0 (https://recoverycalendar.app)' }
+        });
+        var geoData = await geoRes.json();
+        if (geoData && geoData.length > 0) {
+          var gLat = parseFloat(geoData[0].lat);
+          var gLng = parseFloat(geoData[0].lon);
+          var gName = geoData[0].display_name ? geoData[0].display_name.split(',').slice(0, 2).join(',').trim() : loc;
+
+          // Show resolved location
+          var resolvedEl2 = document.getElementById('flmResolved');
+          if (resolvedEl2) {
+            resolvedEl2.textContent = 'Searching near ' + gName;
+            resolvedEl2.classList.add('visible');
+          }
+
+          // Try aggregator with geocoded coordinates
+          try {
+            var aggRes2 = await fetch('https://meeting-aggregator.netlify.app/api/search', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ lat: gLat, lng: gLng, radiusKm: radiusKm })
+            });
+            var aggData2 = await aggRes2.json();
+            if (aggData2.success && aggData2.results && aggData2.results.length > 0) {
+              data = {
+                success: true,
+                results: aggData2.results.map(function(m) { return {
+                  name: m.meetingName,
+                  day: m.dayOfWeek,
+                  time: m.startTime,
+                  fellowship: m.program === 'NA' ? 'Narcotics Anonymous (NA)' :
+                              m.program === 'AA' ? 'Alcoholics Anonymous (AA)' :
+                              m.program === 'SMART' ? 'SMART Recovery' :
+                              m.program === 'Al-Anon' ? 'Al-Anon' :
+                              m.program || '',
+                  format: m.format || 'Discussion',
+                  access: m.access === 'Open' ? 'Anyone Welcome' :
+                          m.access === 'Closed' ? 'Members Only' : m.access || 'Anyone Welcome',
+                  gender: '',
+                  location: m.locationName || '',
+                  address: [m.street, m.city, m.state, m.zip].filter(Boolean).join(', '),
+                  notes: [m.notes, m.distanceMiles ? m.distanceMiles.toFixed(1) + ' mi away' : ''].filter(Boolean).join(' · '),
+                  distance_km: m.distanceKm || 0,
+                  confidence: m.confidenceScore || 0.7,
+                  attendanceMode: m.attendanceMode || 'In-Person',
+                  virtualUrl: m.virtualUrl || '',
+                  virtualMeetingId: m.virtualMeetingId || '',
+                  virtualPassword: m.virtualPassword || ''
+                }; }),
+                location: gName,
+                stats: aggData2.stats
+              };
+              usedAggregator = true;
+            }
+          } catch (aggErr2) {
+            console.log('Aggregator unavailable for geocoded city, falling back:', aggErr2.message);
+          }
+        }
+      } catch (geoErr) {
+        console.log('Geocoding failed, falling back to legacy:', geoErr.message);
+      }
+    }
+
+    // Final fallback to legacy Netlify function (BMLT-only, NA meetings)
     if (!usedAggregator) {
       const res = await fetch('/.netlify/functions/find-meetings', {
         method: 'POST',
@@ -10973,26 +11410,26 @@ function _flmRenderPage() {
                            mode === 'Hybrid' ? 'flm-badge-hybrid' : 'flm-badge-inperson';
     const modeBadge = '<span class="flm-mode-badge ' + modeBadgeClass + '">' + escapeHTML(mode) + '</span>';
 
-    // Virtual meeting link
-    let virtualLinkHtml = '';
-    if (m.virtualUrl && (mode === 'Virtual' || mode === 'Hybrid')) {
-      const meetingIdStr = m.virtualMeetingId ? ' · ID: ' + escapeHTML(m.virtualMeetingId) : '';
-      const passwordStr = m.virtualPassword ? ' · PW: ' + escapeHTML(m.virtualPassword) : '';
-      virtualLinkHtml =
-        '<div class="flm-card-virtual">' +
-          '<a href="' + escapeHTML(m.virtualUrl) + '" target="_blank" rel="noopener noreferrer" class="flm-virtual-link">' +
-            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14"/><rect x="1" y="6" width="14" height="12" rx="2" ry="2"/></svg>' +
-            ' Join Virtual Meeting' +
-          '</a>' +
-          (meetingIdStr || passwordStr ?
-            '<span class="flm-virtual-details">' + (meetingIdStr + passwordStr).replace(/^ · /, '') + '</span>' : '') +
-        '</div>';
-    }
+    // Virtual meeting — just store the URL for when it's added to calendar
+    // No join link in search results since user isn't joining from here
 
     // Location line (hide for purely virtual meetings with no address)
     const hasPhysicalLocation = m.location || m.address;
     const locationHtml = hasPhysicalLocation ?
       '<div class="flm-card-location">' + escapeHTML((m.location || '') + (m.address ? ' — ' + m.address : '')) + '</div>' : '';
+
+    // Build details section (hidden by default)
+    var detailParts = [];
+    if (m.fellowship) detailParts.push('<div class="flm-detail-row"><strong>Fellowship:</strong> ' + escapeHTML(m.fellowship) + '</div>');
+    if (m.format) detailParts.push('<div class="flm-detail-row"><strong>Format:</strong> ' + escapeHTML(m.format) + '</div>');
+    if (m.access) detailParts.push('<div class="flm-detail-row"><strong>Access:</strong> ' + escapeHTML(m.access) + '</div>');
+    if (m.gender) detailParts.push('<div class="flm-detail-row"><strong>Gender:</strong> ' + escapeHTML(m.gender) + '</div>');
+    if (mode === 'Virtual' || mode === 'Hybrid') detailParts.push('<div class="flm-detail-row"><strong>Attendance:</strong> ' + escapeHTML(mode) + (m.virtualUrl ? ' (link available)' : '') + '</div>');
+    if (m.location) detailParts.push('<div class="flm-detail-row"><strong>Location:</strong> ' + escapeHTML(m.location) + '</div>');
+    if (m.address) detailParts.push('<div class="flm-detail-row"><strong>Address:</strong> ' + escapeHTML(m.address) + '</div>');
+    if (m.notes) detailParts.push('<div class="flm-detail-row"><strong>Notes:</strong> ' + escapeHTML(m.notes) + '</div>');
+    var detailsHtml = detailParts.length ?
+      '<div class="flm-card-details" style="display:none;">' + detailParts.join('') + '</div>' : '';
 
     card.innerHTML =
       '<div class="flm-card-header">' +
@@ -11002,19 +11439,30 @@ function _flmRenderPage() {
       '<div class="flm-card-meta">' +
         '<span>' + dayStr + ' · ' + timeStr + '</span>' +
         '<span>' + escapeHTML(m.fellowship || '') + '</span>' +
-        '<span>' + escapeHTML(m.format || '') + '</span>' +
         (distStr ? '<span>' + distStr + '</span>' : '') +
       '</div>' +
       locationHtml +
-      virtualLinkHtml +
+      detailsHtml +
       '<div class="flm-card-footer">' +
-        '<span class="flm-card-confidence">Confidence: ' + confPct + '%</span>' +
-        '<button class="flm-add-btn" data-flm-idx="' + i + '">Add to Calendar</button>' +
+        '<button class="flm-details-btn" data-flm-idx="' + i + '">Details</button>' +
+        '<button class="flm-add-btn" data-flm-idx="' + i + '">+ Add</button>' +
       '</div>';
 
     card.querySelector('.flm-add-btn').addEventListener('click', function() {
-      addFoundMeeting(results[i]);
+      addFoundMeeting(results[i], this);
     });
+
+    var detailsBtn = card.querySelector('.flm-details-btn');
+    if (detailsBtn) {
+      detailsBtn.addEventListener('click', function() {
+        var details = this.closest('.flm-card').querySelector('.flm-card-details');
+        if (details) {
+          var open = details.style.display !== 'none';
+          details.style.display = open ? 'none' : 'block';
+          this.textContent = open ? 'Details' : 'Hide';
+        }
+      });
+    }
 
     list.appendChild(card);
   })(i); }
@@ -11037,58 +11485,43 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-function addFoundMeeting(m) {
-  // Close find modal
-  closeFindMeetings();
+function addFoundMeeting(m, btnEl) {
+  // Add directly as a weekly meeting — no modal
+  var data = {
+    id: crypto.randomUUID(),
+    name: m.name || 'Unnamed Meeting',
+    day: m.day != null ? m.day : 0,
+    time: m.time || '19:00',
+    fellowship: m.fellowship || '',
+    format: m.format || 'Discussion',
+    access: m.access || 'Anyone Welcome',
+    gender: m.gender || '',
+    location: m.location || '',
+    address: m.address || '',
+    notes: m.notes || '',
+    oneoff: ''
+  };
 
-  // Small delay for animation, then open Add Meeting modal pre-filled
-  setTimeout(() => {
-    editingId = null;
-    document.getElementById('modalTitle').textContent = 'Review & Add Meeting';
-    setFrequency('weekly');
+  meetings.push(data);
+  save();
+  populateLocationSelect();
+  buildChips();
+  render();
 
-    document.getElementById('fName').value = m.name || '';
-    document.getElementById('fDay').value = m.day != null ? m.day : 0;
-    document.getElementById('fTime').value = m.time || '19:00';
-    document.getElementById('fLocation').value = m.location || '';
-    document.getElementById('fAddress').value = m.address || '';
-    document.getElementById('fNotes').value = m.notes || '';
-
-    // Try to match fellowship
-    const fSelect = document.getElementById('fFellowship');
-    fSelect.value = m.fellowship || '';
-    if (!fSelect.value && m.fellowship) {
-      // Fallback: find partial match
-      for (let i = 0; i < fSelect.options.length; i++) {
-        if (fSelect.options[i].value.toLowerCase().includes((m.fellowship || '').toLowerCase().split('(')[0].trim().split(' ')[0].toLowerCase())) {
-          fSelect.value = fSelect.options[i].value;
-          break;
-        }
-      }
-    }
-
-    // Try to match format
-    const fmtSelect = document.getElementById('fFormat');
-    fmtSelect.value = m.format || '';
-    if (!fmtSelect.value && m.format) {
-      for (let i = 0; i < fmtSelect.options.length; i++) {
-        if (fmtSelect.options[i].value.toLowerCase().includes((m.format || '').toLowerCase().split(' ')[0].toLowerCase())) {
-          fmtSelect.value = fmtSelect.options[i].value;
-          break;
-        }
-      }
-    }
-
-    document.getElementById('fAccess').value = m.access || 'Anyone Welcome';
-    document.getElementById('fGender').value = m.gender || '';
-
-    document.getElementById('modalOverlay').classList.add('active');
-  }, 250);
+  // Update button to show "Added" confirmation
+  if (btnEl) {
+    btnEl.textContent = 'Added';
+    btnEl.disabled = true;
+    btnEl.classList.add('flm-added');
+  }
 }
 
-// Allow Enter key to trigger search
+// Allow Enter key to trigger search (but not if autocomplete is handling it)
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && document.getElementById('findMeetingsOverlay').classList.contains('active')) {
+    var ac = document.getElementById('flmAutocomplete');
+    if (ac && ac.classList.contains('open') && _flmAcIdx >= 0) return; // autocomplete handles it
+    _flmCloseAutocomplete();
     const loc = document.getElementById('flmLocation');
     if (document.activeElement === loc && !document.getElementById('flmSearchBtn').disabled) {
       findLocalMeetingsSearch();
@@ -11945,6 +12378,23 @@ function toggleAbout(skipScroll) {
   }
   updateUrlParams();
 }
+
+// === FOOTER MEETING COUNT ===
+(function fetchMeetingStats() {
+  fetch('https://meeting-aggregator.netlify.app/api/stats')
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(data) {
+      if (data && data.meetings > 0) {
+        var el = document.getElementById('footerMeetingCount');
+        var num = document.getElementById('fmcNumber');
+        if (el && num) {
+          num.textContent = data.meetings.toLocaleString();
+          el.style.display = '';
+        }
+      }
+    })
+    .catch(function() { /* silently fail — badge just stays hidden */ });
+})();
 
 function toggleCustomize() {
   const box = document.getElementById('customizeBox');
