@@ -9183,6 +9183,7 @@ let demoMode = false;
 function showApp() {
   document.getElementById('landingPage').style.display = 'none';
   document.getElementById('appContent').style.display = '';
+  window.scrollTo(0, 0);
   // Slider needs layout to measure — defer until after display is restored
   requestAnimationFrame(function() { updateMeetingsSlider(false); updateViewSlider(false); });
 }
@@ -11656,7 +11657,17 @@ function filterFlmResults(results) {
   const modeFilter = document.getElementById('flmMode').value;
   return results.filter(m => {
     if (dayFilter !== '' && String(m.day) !== dayFilter) return false;
-    if (typeFilter && !(m.type || m.fellowship || '').toLowerCase().includes(typeFilter.toLowerCase())) return false;
+    if (typeFilter) {
+      var fel = (m.type || m.fellowship || '').toLowerCase();
+      var typeMap = {
+        'AA': 'alcoholics anonymous', 'NA': 'narcotics anonymous', 'CA': 'cocaine anonymous',
+        'CMA': 'crystal meth anonymous', 'MA': 'marijuana anonymous', 'HA': 'heroin anonymous',
+        'GA': 'gamblers anonymous', 'OA': 'overeaters anonymous', 'Al-Anon': 'al-anon',
+        'SMART': 'smart recovery', 'CR': 'celebrate recovery', 'RD': 'recovery dharma'
+      };
+      var matchName = typeMap[typeFilter] ? typeMap[typeFilter].toLowerCase() : typeFilter.toLowerCase();
+      if (!fel.includes(matchName) && !fel.includes(typeFilter.toLowerCase())) return false;
+    }
     if (formatFilter && m.format !== formatFilter) return false;
     if (accessFilter && m.access !== accessFilter) return false;
     if (modeFilter && m.attendanceMode !== modeFilter) return false;
