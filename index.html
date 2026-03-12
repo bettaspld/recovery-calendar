@@ -470,7 +470,8 @@
   /* === HERO TITLE === */
   .hero {
     text-align: center;
-    padding: 20px 24px 16px;
+    padding: 32px 24px 16px;
+    overflow: visible;
   }
   .hero-personal {
     font-size: 11px;
@@ -4956,7 +4957,7 @@
       margin-bottom: 20px;
     }
     .hero {
-      padding: 16px 16px 8px;
+      padding: 24px 16px 8px;
     }
     .hero h1 {
       font-size: 22px;
@@ -6144,6 +6145,8 @@
   <nav class="nav-text-menu" id="navTextMenu">
     <button class="nav-text-link guide-nav-home" id="guideNavHome" onclick="closeGuide(); closeNavMenu()" style="display:none;">Home</button>
     <span class="nav-text-sep guide-nav-home" style="display:none;">|</span>
+    <button class="nav-text-link" onclick="openFindMeetings(); closeNavMenu()">Find Meetings</button>
+    <span class="nav-text-sep">|</span>
     <div class="nav-dropdown" id="navAddDropdown">
       <button class="nav-text-link nav-dropdown-trigger" onclick="toggleAddDropdown(event)">Add Meetings <span class="nav-dd-arrow">&#9662;</span></button>
       <div class="nav-dropdown-menu nav-add-menu" id="addDropdownMenu">
@@ -6161,8 +6164,6 @@
         </button>
       </div>
     </div>
-    <span class="nav-text-sep">|</span>
-    <button class="nav-text-link" onclick="openFindMeetings(); closeNavMenu()">Find Meetings</button>
     <span class="nav-text-sep">|</span>
     <div class="nav-dropdown" id="navSettingsDropdown">
       <button class="nav-text-link nav-dropdown-trigger" id="settingsDropdownTrigger" onclick="toggleSettingsDropdown(event)"><span id="settingsDropdownLabel">Settings</span> <span class="nav-dd-arrow">&#9662;</span></button>
@@ -11471,6 +11472,18 @@ async function findLocalMeetingsSearch() {
         } else {
           searchBody = { zipCode: loc.trim(), radiusKm: radiusKm };
         }
+        // Pass type filter to aggregator for server-side filtering
+        var typeVal = document.getElementById('flmType').value;
+        if (typeVal) {
+          var programMap = {
+            'AA': ['AA'], 'NA': ['NA'], 'CA': ['CA'], 'CMA': ['CMA'],
+            'MA': ['MA'], 'HA': ['HA'], 'GA': ['GA'], 'OA': ['OA'],
+            'Al-Anon': ['AL_ANON'], 'SMART': ['SMART'],
+            'CR': ['CELEBRATE_RECOVERY'], 'RD': ['RECOVERY_DHARMA']
+          };
+          if (programMap[typeVal]) searchBody.program = programMap[typeVal];
+        }
+        searchBody.limit = 500;
         const aggRes = await fetch('https://meeting-aggregator.netlify.app/api/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
