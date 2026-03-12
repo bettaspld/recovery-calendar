@@ -470,7 +470,7 @@
   /* === HERO TITLE === */
   .hero {
     text-align: center;
-    padding: 32px 24px 16px;
+    padding: 20px 24px 16px;
   }
   .hero-personal {
     font-size: 11px;
@@ -481,12 +481,12 @@
     margin-bottom: 4px;
   }
   .hero h1 {
-    font-size: clamp(24px, 4vw, 40px);
+    font-size: clamp(24px, 3.5vw, 36px);
     font-weight: 700;
     letter-spacing: 6px;
     text-transform: uppercase;
     color: var(--ink);
-    line-height: 1.1;
+    line-height: 1.2;
   }
 
   /* === SETTINGS MODAL === */
@@ -2274,16 +2274,17 @@
     position: relative;
   }
   .onboard-close {
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    background: none;
+    position: sticky;
+    top: 0;
+    float: right;
+    background: var(--paper);
     border: none;
     font-size: 28px;
     line-height: 1;
     color: var(--ink-faint);
     cursor: pointer;
     padding: 4px 8px;
+    z-index: 5;
     transition: color 0.15s;
   }
   .onboard-close:hover { color: var(--ink); }
@@ -2332,7 +2333,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
   .onboard-step-num {
     width: 30px;
@@ -2411,7 +2412,7 @@
     font-size: 15px;
     font-weight: 700;
     color: var(--ink);
-    margin-bottom: 2px;
+    margin-bottom: 1px;
   }
   .onboard-feat-desc {
     font-size: 13px;
@@ -8309,16 +8310,8 @@
 <div class="onboard-overlay" id="onboardOverlay" onclick="if(event.target===this)closeOnboarding()">
   <div class="onboard-inner">
     <button class="onboard-close" onclick="closeOnboarding()" aria-label="Close">&times;</button>
-    <div class="onboard-header">
-      <div class="onboard-title">Recovery Calendar</div>
-      <div class="onboard-subtitle">Your Personal Recovery Meeting Planner</div>
-    </div>
 
-    <div class="onboard-intro">
-      Keep all your recovery meetings in one place. See your week at a glance, find new meetings nearby, and never miss a meeting that matters to you.
-    </div>
-
-    <div class="onboard-section-title">Getting Started</div>
+    <div class="onboard-section-title" style="margin-top:8px;">Getting Started</div>
 
     <div class="onboard-step">
       <div class="onboard-step-head">
