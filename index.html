@@ -6093,7 +6093,7 @@
       </div>
     </div>
     <div class="guide-tip">
-      <strong>Tip:</strong> Tap any meeting card to expand it and see edit, delete, and export-to-calendar options. Use the <strong>All Meetings / My Meetings</strong> toggle to switch between everything and just the ones you attend.
+      <strong>Tip:</strong> Tap any meeting card to expand it and see edit, delete, export-to-calendar, and "What to Expect" options. Use the <strong>All Meetings / My Meetings</strong> toggle to switch between everything and just the ones you attend. Bulk removals show an undo toast for 8 seconds in case you change your mind.
     </div>
   </div>
 
@@ -6339,7 +6339,7 @@
   <div class="guide-section" id="guide-sobriety">
     <div class="guide-section-num">07</div>
     <div class="guide-section-title">Sobriety Tracker</div>
-    <div class="guide-section-desc">A small bar at the bottom-right of your calendar shows your day count and progress toward the next milestone. Set your clean date and the tracker handles the rest — counting days, tracking milestones (30, 60, 90 days, 6 months, 1 year, and beyond), and celebrating each one.</div>
+    <div class="guide-section-desc">A bar at the bottom of your calendar shows your day count with a live hours-minutes-seconds clock ticking in real time. Set your clean date and optional time, and the tracker handles the rest — counting days, tracking milestones (1 week, 30, 60, 90 days, 6 months, 1 year, and beyond), and celebrating each one. Your sobriety date syncs across all your devices.</div>
     <div class="guide-visual" style="padding: 0;">
       <div style="width: 100%;">
         <!-- Dark bottom nav bar -->
@@ -6369,10 +6369,10 @@
       </div>
     </div>
     <ol class="guide-steps">
-      <li>The tracker appears at the bottom of your calendar</li>
-      <li>Tap to expand and see your milestone progress</li>
-      <li>Tap <strong>Edit Date</strong> to set or change your sobriety date</li>
-      <li>The counter and milestones update automatically every day</li>
+      <li>The tracker bar appears at the bottom of your calendar — tap the tab to expand or collapse it</li>
+      <li>Tap the drop icon or day count to open the date picker</li>
+      <li>Tap <strong>Edit</strong> to change your date, or <strong>Reset</strong> to clear it</li>
+      <li>The live clock and milestones update automatically in real time</li>
     </ol>
   </div>
 
@@ -6380,7 +6380,7 @@
   <div class="guide-section" id="guide-account">
     <div class="guide-section-num">08</div>
     <div class="guide-section-title">Account &amp; Sync</div>
-    <div class="guide-section-desc">Sign in with <strong>Google</strong> or <strong>email &amp; password</strong> to sync meetings, settings, and your sobriety date across devices. Changes you make on one device appear everywhere automatically. Your account page lets you edit your name, reset your password, or delete your account.</div>
+    <div class="guide-section-desc">Sign in with <strong>Google</strong> or <strong>email &amp; password</strong> to sync meetings, settings, and your sobriety date across devices in real time. Changes you make on one device appear everywhere automatically. New accounts receive a verification email. Your account page lets you edit your name, reset your password, or delete your account.</div>
     <div class="guide-visual">
       <div style="width: 100%;">
         <div style="background: var(--white); border: 1px solid var(--grid-line); border-radius: 6px; padding: 16px; font-family: inherit;">
@@ -6413,7 +6413,7 @@
   <div class="guide-section" id="guide-email">
     <div class="guide-section-num">09</div>
     <div class="guide-section-title">Email Schedule &amp; Backup</div>
-    <div class="guide-section-desc">Email yourself a copy of your weekly or monthly schedule for quick reference on the go. You can also export all your meetings and settings as a backup file, or import a previous backup to restore everything.</div>
+    <div class="guide-section-desc">Email yourself a formatted copy of your weekly or monthly schedule for quick reference on the go. Weekly emails include direct links back to each meeting's detail card. You can also export all your meetings and settings as a JSON backup file, or import a previous backup to restore everything.</div>
     <div class="guide-visual">
       <div style="width: 100%;">
         <!-- Share action links (matches real site .share-actions) -->
@@ -6445,9 +6445,10 @@
       </div>
     </div>
     <ol class="guide-steps">
-      <li>Below the calendar, tap <strong>Email me this week</strong> to send your schedule to your inbox</li>
+      <li>Below the calendar, tap <strong>Email me this week</strong> or switch to month view for <strong>Email me this month</strong></li>
+      <li>Weekly emails include clickable links to each meeting's detail card in the app</li>
       <li>To save a backup, go to Settings → Data → <strong>Export Backup</strong></li>
-      <li>To restore, use <strong>Import Backup</strong> and select your saved file</li>
+      <li>To restore, use <strong>Import Backup</strong> and select your saved JSON file</li>
     </ol>
   </div>
 
@@ -6708,7 +6709,7 @@
             <div class="about-feature-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M2 2v12h12V2H2zm1 1h10v2H3V3zm0 3h4v3H3V6zm5 0h5v3H8V6zM3 10h4v3H3v-3zm5 0h5v3H8v-3z"/></svg></div>
             <div class="about-feature-text">
               <div class="about-feature-title">Add & Edit Meetings</div>
-              <div class="about-feature-desc">Add your own meetings with full details — name, day, time, fellowship, format, location, address, and notes. Edit or delete anytime with undo support. Reset your calendar at any time from settings.</div>
+              <div class="about-feature-desc">Add your own meetings with full details — name, day, time, fellowship, format, location, address, and notes. Edit or delete anytime. Clear by location or type from Settings, with an 8-second undo window so nothing is lost by accident.</div>
             </div>
           </div>
 
@@ -6737,10 +6738,18 @@
           </div>
 
           <div class="about-feature">
+            <div class="about-feature-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm1 0l5 4 5-4H3zm0 1.5V13h10V4.5L8 8.5 3 4.5z"/></svg></div>
+            <div class="about-feature-text">
+              <div class="about-feature-title">Email Your Schedule</div>
+              <div class="about-feature-desc">Email yourself a formatted copy of your weekly or monthly meeting schedule with one tap. Meetings link directly back to your calendar for quick reference. A welcome email introduces new users to the app.</div>
+            </div>
+          </div>
+
+          <div class="about-feature">
             <div class="about-feature-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.5 3h1v5h-1V4zm0 6h1v1h-1v-1z"/></svg></div>
             <div class="about-feature-text">
               <div class="about-feature-title">Sobriety Tracker</div>
-              <div class="about-feature-desc">Set your clean date and watch your day count grow with a live clock. Milestones are celebrated as you hit 1 week, 30 days, 90 days, 1 year, and beyond.</div>
+              <div class="about-feature-desc">Set your clean date and time, then watch your day count grow with a live hours-minutes-seconds clock. Milestones are celebrated as you hit 1 week, 30 days, 90 days, 6 months, 1 year, and beyond. Syncs across devices in real time.</div>
             </div>
           </div>
 
@@ -6748,7 +6757,7 @@
             <div class="about-feature-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 0a.5.5 0 01.5.5V1a7 7 0 110 14v.5a.5.5 0 01-1 0V15A7 7 0 017.5 1V.5A.5.5 0 018 0zm0 3a5 5 0 100 10A5 5 0 008 3zm0 1.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/></svg></div>
             <div class="about-feature-text">
               <div class="about-feature-title">Cloud Sync</div>
-              <div class="about-feature-desc">Sign in with Google or email to sync meetings across devices in real time via Firebase. A live sync status in the footer shows your connection state. Works fully offline too.</div>
+              <div class="about-feature-desc">Sign in with Google or email to sync meetings, settings, and sobriety data across devices in real time via Firebase. A live sync indicator in the footer shows your connection state. Works fully offline too.</div>
             </div>
           </div>
 
@@ -6756,7 +6765,7 @@
             <div class="about-feature-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 010 10V3z"/></svg></div>
             <div class="about-feature-text">
               <div class="about-feature-title">Personalize Everything</div>
-              <div class="about-feature-desc">Six accent colors, seven mood palettes, eight paper textures, three text sizes, and a custom headline. Personalization starts right from the landing page. Even the browser favicon updates to match your accent color.</div>
+              <div class="about-feature-desc">Six accent colors, seven mood palettes, eight paper textures, three text sizes, dark mode, and a custom headline and greeting. Personalization starts right from the landing page. Even the browser favicon updates to match your accent color.</div>
             </div>
           </div>
 
@@ -6796,7 +6805,7 @@
             <div class="about-feature-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 1a4 4 0 100 8 4 4 0 000-8zM2 13c0-2.21 2.69-4 6-4s6 1.79 6 4v1H2v-1z"/></svg></div>
             <div class="about-feature-text">
               <div class="about-feature-title">Account & Sign-In</div>
-              <div class="about-feature-desc">Create an account with email or sign in with Google. Your meetings and settings sync securely across all your devices. A show/hide toggle keeps your password private.</div>
+              <div class="about-feature-desc">Create an account with email or sign in with Google. Your meetings, settings, and sobriety date sync securely across all your devices. Includes email verification, password reset, and a show/hide toggle to keep your password private.</div>
             </div>
           </div>
 
@@ -8523,6 +8532,24 @@ function loadUserDataFromFirebase() {
           buildChips();
           if (!window._suppressRender) render();
         }
+      });
+    }
+
+    // Set up real-time sobriety listener
+    var _sobRef = getUserSobrietyRef();
+    if (_sobRef) {
+      _sobRef.on('value', function(snapshot) {
+        if (window._fbWriteInProgress) return;
+        var data = snapshot.val();
+        if (data && data.date) {
+          localStorage.setItem('recoverySobrietyDate', data.date);
+          localStorage.setItem('recoverySobrietyTime', data.time || '00:00');
+          if (data.collapsed !== undefined) localStorage.setItem('recoverySobrietyCollapsed', data.collapsed);
+        } else if (data === null) {
+          localStorage.removeItem('recoverySobrietyDate');
+          localStorage.removeItem('recoverySobrietyTime');
+        }
+        if (typeof window._sobrietyRerender === 'function') window._sobrietyRerender();
       });
     }
   });
