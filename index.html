@@ -8249,25 +8249,46 @@ function adminTestEmail(type) {
     ? 'My Recovery Meetings — ' + MONTH_NAMES[startDate.getMonth()] + ' ' + startDate.getDate() + '–' + endDate.getDate() + ', ' + endDate.getFullYear()
     : 'My Recovery Meetings — ' + MONTH_NAMES[startDate.getMonth()] + ' ' + startDate.getFullYear();
 
-  // Build HTML rows — no inline styles on rows, only on day headers
-  var htmlBody = '<style>._d{padding:12px 0 3px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid #eee}._t{padding:3px 0;font-size:13px}._t b{font-weight:600}._t small{font-size:12px}</style>';
+  // Build HTML rows — two passes: full detail first, then stripped if too large
+  // Fellowship short-name map: strip long names, keep just abbreviation
+  var _fshort = { 'Alcoholics Anonymous (AA)': 'AA', 'Narcotics Anonymous (NA)': 'NA', 'Cocaine Anonymous (CA)': 'CA', 'Al-Anon / Alateen': 'Al-Anon', 'Gamblers Anonymous (GA)': 'GA', 'SMART Recovery': 'SMART', 'SMART Recovery Family & Friends': 'SMART F&F', 'Nar-Anon': 'Nar-Anon', 'Yoga of 12-Step Recovery': 'Y12SR', 'Narcotics Anonymous': 'NA', 'Alcoholics Anonymous': 'AA', 'Cocaine Anonymous': 'CA', 'Gamblers Anonymous': 'GA' };
+  function fShort(f) { return _fshort[f] || f; }
+
+  function buildScheduleHtml(mtgs, start, days, colors, detail) {
+    var h = '', cnt = 0, prevDay = -1;
+    for (var i = 0; i < days; i++) {
+      var d = new Date(start); d.setDate(d.getDate() + i);
+      var dow = d.getDay();
+      var dm = mtgs.filter(function(m) { return m.day == dow; });
+      if (!dm.length) continue;
+      dm.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
+      // Spacer between day groups (not before first)
+      if (prevDay >= 0) h += '<tr><td style="padding:0;height:16px;font-size:0;line-height:0">&nbsp;</td></tr>';
+      prevDay = dow;
+      h += '<tr><td style="padding:10px 0 6px;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:' + colors.a + ';border-bottom:2px solid ' + colors.a + '">' + DAY_NAMES_FULL[dow] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate() + '</td></tr>';
+      dm.forEach(function(m) {
+        var t = typeof formatTime === 'function' ? formatTime(m.time) : m.time;
+        var fs = m.fellowship ? fShort(m.fellowship) : '';
+        if (detail && fs) {
+          h += '<tr><td style="padding:4px 0 4px 8px;font-size:13px;border-left:2px solid #eee"><span style="color:' + colors.f + ';font-size:12px">' + t + '</span> &nbsp;<b style="color:' + colors.i + '">' + m.name + '</b> <span style="color:' + colors.f + ';font-size:11px">' + fs + '</span></td></tr>';
+        } else {
+          h += '<tr><td style="padding:3px 0 3px 8px;font-size:13px;border-left:2px solid #eee"><span style="color:' + colors.f + ';font-size:12px">' + t + '</span> &nbsp;<b style="color:' + colors.i + '">' + m.name + '</b></td></tr>';
+        }
+        cnt++;
+      });
+    }
+    return { html: h, count: cnt };
+  }
+
   var meetingCount = 0;
   var ca = c.accent, ci = c.ink, cf = c.ink_faint;
+  var cols = { a: ca, i: ci, f: cf };
   var daysToShow = isWeek ? 7 : ((endDate - startDate) / 86400000) + 1;
-  for (var i = 0; i < daysToShow; i++) {
-    var d = new Date(startDate);
-    d.setDate(d.getDate() + i);
-    var dow = d.getDay();
-    var dayMeetings = sampleMeetings.filter(function(m) { return m.day == dow; });
-    if (dayMeetings.length === 0) continue;
-    dayMeetings.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
-    htmlBody += '<tr><td class="_d" style="color:' + ca + '">' + DAY_NAMES_FULL[dow] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate() + '</td></tr>';
-    dayMeetings.forEach(function(m) {
-      var t = typeof formatTime === 'function' ? formatTime(m.time) : m.time;
-      htmlBody += '<tr><td class="_t"><small style="color:' + cf + '">' + t + '</small> <b style="color:' + ci + '">' + m.name + '</b>' + (m.fellowship ? ' <small style="color:' + cf + '">(' + m.fellowship + ')</small>' : '') + '</td></tr>';
-      meetingCount++;
-    });
-  }
+
+  // First pass: with fellowship
+  var result = buildScheduleHtml(sampleMeetings, startDate, daysToShow, cols, true);
+  var htmlBody = result.html;
+  meetingCount = result.count;
 
   var payload = {
     to_email: email, user_name: userName, subject: subject,
@@ -8275,10 +8296,19 @@ function adminTestEmail(type) {
     meeting_count: meetingCount, view_label: isWeek ? 'Week' : 'Month',
     color_accent: ca, color_ink: ci, color_ink_faint: cf, color_paper: c.paper
   };
+
+  // If too large, retry without fellowship detail
+  if (JSON.stringify(payload).length > 45000) {
+    result = buildScheduleHtml(sampleMeetings, startDate, daysToShow, cols, false);
+    payload.meetings_html = result.html;
+    payload.meeting_count = result.count;
+    meetingCount = result.count;
+  }
+
   var sz = JSON.stringify(payload).length;
   console.log('[AdminEmail] Payload size: ' + Math.round(sz/1024) + 'KB');
-  if (sz > 48000) {
-    adminEmailError('Payload too large (' + Math.round(sz/1024) + 'KB/50KB). Try Week view or fewer meetings.', '');
+  if (sz > 49500) {
+    adminEmailError('Payload too large (' + Math.round(sz/1024) + 'KB). Try Week view or fewer meetings.', '');
     return;
   }
 
