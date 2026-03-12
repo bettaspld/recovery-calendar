@@ -4986,10 +4986,31 @@
     color: var(--accent);
   }
   .admin-btn-icon {
-    font-size: 16px;
-    width: 24px;
-    text-align: center;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .admin-btn-icon svg {
+    width: 14px;
+    height: 14px;
+    color: var(--accent);
+  }
+  .admin-btn-danger .admin-btn-icon {
+    background: color-mix(in srgb, var(--red-accent) 10%, transparent);
+  }
+  .admin-btn-danger .admin-btn-icon svg {
+    color: var(--red-accent);
+  }
+  .admin-btn:hover .admin-btn-icon {
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .admin-btn-danger:hover .admin-btn-icon {
+    background: color-mix(in srgb, var(--red-accent) 18%, transparent);
   }
   .admin-btn-content {
     flex: 1;
@@ -5025,68 +5046,137 @@
   }
 
   /* Admin email tester */
+  .admin-email-section {
+    background: var(--white, #fff);
+    border: 1.5px solid var(--grid-line);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 6px;
+  }
+  .admin-email-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--grid-line);
+  }
+  .admin-email-header-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .admin-email-header-icon svg {
+    width: 16px;
+    height: 16px;
+    color: var(--accent);
+  }
+  .admin-email-header-text {
+    flex: 1;
+  }
+  .admin-email-header-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .admin-email-to {
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 1px;
+  }
+  .admin-email-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .admin-email-row label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    width: 48px;
+    flex-shrink: 0;
+  }
+  .admin-theme-select {
+    flex: 1;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--grid-line);
+    border-radius: 6px;
+    padding: 7px 10px;
+    cursor: pointer;
+  }
   .admin-email-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
-    margin-top: 8px;
   }
   .admin-email-btn {
     font-family: inherit;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    letter-spacing: 0.3px;
     color: var(--ink);
-    background: var(--white, #fff);
-    border: 1.5px solid var(--grid-line);
+    background: var(--paper);
+    border: 1px solid var(--grid-line);
     border-radius: 8px;
     padding: 10px 8px;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.15s;
-    text-align: center;
-    line-height: 1.4;
+    transition: border-color 0.2s, background 0.15s, transform 0.1s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .admin-email-btn:hover {
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 6%, var(--white, #fff));
+    background: color-mix(in srgb, var(--accent) 6%, var(--paper));
   }
   .admin-email-btn:active {
     transform: scale(0.97);
   }
   .admin-email-btn.sending {
-    opacity: 0.5;
+    opacity: 0.4;
     pointer-events: none;
   }
-  .admin-email-btn .admin-email-icon {
-    display: block;
-    font-size: 16px;
-    margin-bottom: 4px;
+  .admin-email-btn-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    flex-shrink: 0;
   }
-  .admin-theme-select {
-    width: 100%;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--ink);
-    background: var(--white, #fff);
-    border: 1.5px solid var(--grid-line);
-    border-radius: 6px;
-    padding: 8px 10px;
-    cursor: pointer;
-    margin-top: 8px;
+  .admin-email-btn-icon svg {
+    width: 12px;
+    height: 12px;
+    color: var(--ink-faint);
+  }
+  .admin-email-btn:hover .admin-email-btn-icon {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .admin-email-btn:hover .admin-email-btn-icon svg {
+    color: var(--accent);
   }
   .admin-email-status {
     font-size: 10px;
     color: var(--accent);
     font-weight: 600;
-    margin-top: 6px;
+    margin-top: 10px;
     min-height: 14px;
-  }
-  .admin-email-to {
-    font-size: 10px;
-    color: var(--ink-faint);
-    margin-top: 4px;
+    text-align: center;
   }
 
   /* === HOW TO USE GUIDE === */
@@ -6690,14 +6780,14 @@
     <div class="admin-section">
       <span class="admin-section-title">View Testing</span>
       <button class="admin-btn" onclick="adminPreviewLanding()">
-        <span class="admin-btn-icon">&#128065;</span>
+        <span class="admin-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
         <span class="admin-btn-content">
           <span class="admin-btn-label">Preview Landing Page</span>
           <span class="admin-btn-desc">View the sign-in page without logging out</span>
         </span>
       </button>
       <button class="admin-btn" onclick="adminToggleDemoData()">
-        <span class="admin-btn-icon">&#128202;</span>
+        <span class="admin-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
         <span class="admin-btn-content">
           <span class="admin-btn-label" id="adminDemoLabel">Load Demo Data</span>
           <span class="admin-btn-desc" id="adminDemoDesc">Switch to sample meeting data for testing</span>
@@ -6708,14 +6798,14 @@
     <div class="admin-section">
       <span class="admin-section-title">Data Tools</span>
       <button class="admin-btn admin-btn-danger" onclick="adminClearLocalStorage()">
-        <span class="admin-btn-icon">&#128465;</span>
+        <span class="admin-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></span>
         <span class="admin-btn-content">
           <span class="admin-btn-label">Clear Local Storage</span>
           <span class="admin-btn-desc">Reset all cached settings and data (keeps Firebase)</span>
         </span>
       </button>
       <button class="admin-btn admin-btn-danger" onclick="adminFullReset()">
-        <span class="admin-btn-icon">&#9888;</span>
+        <span class="admin-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
         <span class="admin-btn-content">
           <span class="admin-btn-label">Full Reset</span>
           <span class="admin-btn-desc">Clear everything and reload as new user</span>
@@ -6726,7 +6816,7 @@
     <div class="admin-section">
       <span class="admin-section-title">Resources</span>
       <button class="admin-btn" onclick="adminShowDocs()">
-        <span class="admin-btn-icon">&#128218;</span>
+        <span class="admin-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
         <span class="admin-btn-content">
           <span class="admin-btn-label">Documentation</span>
           <span class="admin-btn-desc">Tech stack, services, and how to maintain the site</span>
@@ -6736,38 +6826,48 @@
 
     <div class="admin-section">
       <span class="admin-section-title">Email Testing</span>
-      <div class="admin-email-to" id="adminEmailTo">Send to: —</div>
-      <label style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint);display:block;margin-top:10px;">Preview Theme</label>
-      <select class="admin-theme-select" id="adminEmailTheme" onchange="adminUpdateEmailThemePreview()">
-        <option value="current">Current Theme (Live)</option>
-        <option value="orange-default-default">Gold / Default / Default Paper</option>
-        <option value="teal-forest-default">Teal / Forest / Default Paper</option>
-        <option value="blue-navy-cool">Blue / Navy / Cool Paper</option>
-        <option value="red-wine-rose">Red / Wine / Rose Paper</option>
-        <option value="purple-midnight-fog">Purple / Midnight / Fog Paper</option>
-        <option value="green-default-sage">Green / Default / Sage Paper</option>
-        <option value="orange-espresso-warm">Gold / Espresso / Warm Paper</option>
-        <option value="teal-slate-cool">Teal / Slate / Cool Paper</option>
-      </select>
-      <div class="admin-email-grid">
-        <button class="admin-email-btn" onclick="adminTestEmail('welcome')">
-          <span class="admin-email-icon">&#128075;</span>
-          Welcome
-        </button>
-        <button class="admin-email-btn" onclick="adminTestEmail('verification')">
-          <span class="admin-email-icon">&#9989;</span>
-          Verification
-        </button>
-        <button class="admin-email-btn" onclick="adminTestEmail('week')">
-          <span class="admin-email-icon">&#128197;</span>
-          Week Schedule
-        </button>
-        <button class="admin-email-btn" onclick="adminTestEmail('month')">
-          <span class="admin-email-icon">&#128198;</span>
-          Month Schedule
-        </button>
+      <div class="admin-email-section">
+        <div class="admin-email-header">
+          <div class="admin-email-header-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div class="admin-email-header-text">
+            <div class="admin-email-header-title">Send Test Emails</div>
+            <div class="admin-email-to" id="adminEmailTo">Recipient: —</div>
+          </div>
+        </div>
+        <div class="admin-email-row">
+          <label>Theme</label>
+          <select class="admin-theme-select" id="adminEmailTheme" onchange="adminUpdateEmailThemePreview()">
+            <option value="current">Current (Live)</option>
+            <option value="orange-default-default">Gold / Default</option>
+            <option value="teal-forest-default">Teal / Forest</option>
+            <option value="blue-navy-cool">Blue / Navy / Cool</option>
+            <option value="red-wine-rose">Red / Wine / Rose</option>
+            <option value="purple-midnight-fog">Purple / Midnight</option>
+            <option value="green-default-sage">Green / Sage</option>
+            <option value="orange-espresso-warm">Gold / Espresso</option>
+            <option value="teal-slate-cool">Teal / Slate / Cool</option>
+          </select>
+        </div>
+        <div class="admin-email-grid">
+          <button class="admin-email-btn" onclick="adminTestEmail('welcome')">
+            <span class="admin-email-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            Welcome
+          </button>
+          <button class="admin-email-btn" onclick="adminTestEmail('verification')">
+            <span class="admin-email-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+            Verify Email
+          </button>
+          <button class="admin-email-btn" onclick="adminTestEmail('week')">
+            <span class="admin-email-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+            Week
+          </button>
+          <button class="admin-email-btn" onclick="adminTestEmail('month')">
+            <span class="admin-email-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="10" y1="14" x2="14" y2="14"/></svg></span>
+            Month
+          </button>
+        </div>
+        <div class="admin-email-status" id="adminEmailStatus"></div>
       </div>
-      <div class="admin-email-status" id="adminEmailStatus"></div>
     </div>
 
     <div class="admin-section">
@@ -8068,34 +8168,49 @@ function adminGetTestColors() {
 
 function adminTestEmail(type) {
   var statusEl = document.getElementById('adminEmailStatus');
+
+  function adminEmailDone() {
+    document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+  }
+  function adminEmailError(label, e) {
+    var msg = (e && (e.text || e.message)) || String(e || 'Unknown error');
+    statusEl.textContent = label + ' — ' + msg;
+    statusEl.style.color = '#C75B5B';
+    adminEmailDone();
+    console.error('[AdminEmail]', label, e);
+  }
+
+  statusEl.style.color = '';
+
   var email = currentUser ? currentUser.email : null;
   if (!email) { statusEl.textContent = 'Sign in to send test emails'; return; }
   if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID) { statusEl.textContent = 'EmailJS not configured'; return; }
+  if (typeof emailjs === 'undefined') { statusEl.textContent = 'EmailJS library failed to load — check network/ad-blocker'; statusEl.style.color = '#C75B5B'; return; }
 
   var c = adminGetTestColors();
   var userName = localStorage.getItem('recoveryFirstName') || 'Joel';
 
   // Disable buttons
   document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.add('sending'); });
-  statusEl.textContent = 'Sending ' + type + ' email...';
+  statusEl.textContent = 'Sending ' + type + ' email…';
 
   if (type === 'verification') {
     // Firebase verification email — re-sends the built-in one
     if (currentUser && currentUser.sendEmailVerification) {
       currentUser.sendEmailVerification().then(function() {
         statusEl.textContent = 'Verification email sent to ' + email;
+        adminEmailDone();
       }).catch(function(e) {
-        statusEl.textContent = 'Error: ' + (e.message || e);
-      }).finally(function() {
-        document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+        adminEmailError('Verification failed', e);
       });
     } else {
       statusEl.textContent = 'Firebase auth not available';
-      document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+      adminEmailDone();
     }
     return;
   }
 
+  try {
   if (type === 'welcome') {
     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_WELCOME_TEMPLATE, {
       to_email: email,
@@ -8107,10 +8222,9 @@ function adminTestEmail(type) {
       color_paper: c.paper
     }).then(function() {
       statusEl.textContent = 'Welcome email sent to ' + email;
+      adminEmailDone();
     }).catch(function(e) {
-      statusEl.textContent = 'Error: ' + (e.text || e);
-    }).finally(function() {
-      document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+      adminEmailError('Welcome email failed', e);
     });
     return;
   }
@@ -8175,11 +8289,14 @@ function adminTestEmail(type) {
     color_paper: c.paper
   }).then(function() {
     statusEl.textContent = (isWeek ? 'Week' : 'Month') + ' schedule sent to ' + email;
+    adminEmailDone();
   }).catch(function(e) {
-    statusEl.textContent = 'Error: ' + (e.text || e);
-  }).finally(function() {
-    document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+    adminEmailError((isWeek ? 'Week' : 'Month') + ' schedule failed', e);
   });
+
+  } catch(err) {
+    adminEmailError('Unexpected error', err);
+  }
 }
 
 function adminUpdateEmailThemePreview() {
