@@ -2343,6 +2343,48 @@
 
   /* === FIND LOCAL MEETINGS (BETA) === */
   .find-meetings-modal { max-width: 520px; }
+  .flm-filters-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+    margin-bottom: 16px;
+  }
+  .flm-filters-grid .form-group { margin-bottom: 0; }
+  .flm-filters-grid select {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1.5px solid var(--grid-line);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 11px;
+    background: var(--white);
+    color: var(--ink);
+  }
+  .flm-filters-grid label { font-size: 8px; margin-bottom: 3px; }
+  .flm-filters-full { grid-column: 1 / -1; }
+  .flm-filters-full select { max-width: 50%; }
+  @media (max-width: 400px) {
+    .flm-filters-grid { grid-template-columns: 1fr; }
+    .flm-filters-full select { max-width: 100%; }
+  }
+  .flm-load-more {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: transparent;
+    border: 1.5px solid var(--grid-line);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .flm-load-more:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--accent); }
   .flm-location-row {
     display: flex;
     gap: 8px;
@@ -2474,7 +2516,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 420px;
+    max-height: 500px;
     overflow-y: auto;
     padding-right: 4px;
   }
@@ -7656,69 +7698,71 @@
             <span id="flmRadiusLabel">10 mi (~16 km)</span>
           </div>
         </div>
-        <div class="form-group">
-          <label>Day</label>
-          <select id="flmDay" style="width:100%;padding:10px 12px;border:1.5px solid var(--grid-line);border-radius:var(--radius);font-family:inherit;font-size:12px;background:var(--white);color:var(--ink);">
-            <option value="">Any Day</option>
-            <option value="0">Sunday</option>
-            <option value="1">Monday</option>
-            <option value="2">Tuesday</option>
-            <option value="3">Wednesday</option>
-            <option value="4">Thursday</option>
-            <option value="5">Friday</option>
-            <option value="6">Saturday</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Type</label>
-          <select id="flmType" style="width:100%;padding:10px 12px;border:1.5px solid var(--grid-line);border-radius:var(--radius);font-family:inherit;font-size:12px;background:var(--white);color:var(--ink);">
-            <option value="">Any Type</option>
-            <option value="AA">Alcoholics Anonymous (AA)</option>
-            <option value="NA">Narcotics Anonymous (NA)</option>
-            <option value="CA">Cocaine Anonymous (CA)</option>
-            <option value="CMA">Crystal Meth Anonymous (CMA)</option>
-            <option value="MA">Marijuana Anonymous (MA)</option>
-            <option value="HA">Heroin Anonymous (HA)</option>
-            <option value="GA">Gamblers Anonymous (GA)</option>
-            <option value="OA">Overeaters Anonymous (OA)</option>
-            <option value="Al-Anon">Al-Anon / Alateen</option>
-            <option value="SMART">SMART Recovery</option>
-            <option value="CR">Celebrate Recovery</option>
-            <option value="RD">Recovery Dharma</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Format</label>
-          <select id="flmFormat" style="width:100%;padding:10px 12px;border:1.5px solid var(--grid-line);border-radius:var(--radius);font-family:inherit;font-size:12px;background:var(--white);color:var(--ink);">
-            <option value="">Any Format</option>
-            <option value="Discussion">Discussion</option>
-            <option value="Speaker">Speaker</option>
-            <option value="Step Study">Step Study</option>
-            <option value="Big Book Study">Big Book Study</option>
-            <option value="Beginner / Newcomer">Beginner / Newcomer</option>
-            <option value="Meditation / Prayer">Meditation / Prayer</option>
-            <option value="Literature Study">Literature Study</option>
-            <option value="Tradition Study">Tradition Study</option>
-            <option value="Speaker-Discussion">Speaker-Discussion</option>
-            <option value="Q&amp;A">Q&amp;A</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Access</label>
-          <select id="flmAccess" style="width:100%;padding:10px 12px;border:1.5px solid var(--grid-line);border-radius:var(--radius);font-family:inherit;font-size:12px;background:var(--white);color:var(--ink);">
-            <option value="">Open & Closed</option>
-            <option value="Anyone Welcome">Anyone Welcome (Open)</option>
-            <option value="Members Only">Members Only (Closed)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Meeting Mode</label>
-          <select id="flmMode" style="width:100%;padding:10px 12px;border:1.5px solid var(--grid-line);border-radius:var(--radius);font-family:inherit;font-size:12px;background:var(--white);color:var(--ink);">
-            <option value="">All (In-Person & Virtual)</option>
-            <option value="In-Person">In-Person Only</option>
-            <option value="Virtual">Virtual Only</option>
-            <option value="Hybrid">Hybrid Only</option>
-          </select>
+        <div class="flm-filters-grid">
+          <div class="form-group">
+            <label>Day</label>
+            <select id="flmDay">
+              <option value="">Any Day</option>
+              <option value="0">Sunday</option>
+              <option value="1">Monday</option>
+              <option value="2">Tuesday</option>
+              <option value="3">Wednesday</option>
+              <option value="4">Thursday</option>
+              <option value="5">Friday</option>
+              <option value="6">Saturday</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="flmType">
+              <option value="">Any Type</option>
+              <option value="AA">AA</option>
+              <option value="NA">NA</option>
+              <option value="CA">CA</option>
+              <option value="CMA">CMA</option>
+              <option value="MA">MA</option>
+              <option value="HA">HA</option>
+              <option value="GA">GA</option>
+              <option value="OA">OA</option>
+              <option value="Al-Anon">Al-Anon</option>
+              <option value="SMART">SMART</option>
+              <option value="CR">Celebrate Recovery</option>
+              <option value="RD">Recovery Dharma</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Format</label>
+            <select id="flmFormat">
+              <option value="">Any Format</option>
+              <option value="Discussion">Discussion</option>
+              <option value="Speaker">Speaker</option>
+              <option value="Step Study">Step Study</option>
+              <option value="Big Book Study">Big Book</option>
+              <option value="Beginner / Newcomer">Newcomer</option>
+              <option value="Meditation / Prayer">Meditation</option>
+              <option value="Literature Study">Literature</option>
+              <option value="Tradition Study">Tradition</option>
+              <option value="Speaker-Discussion">Speaker-Disc.</option>
+              <option value="Q&amp;A">Q&amp;A</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Access</label>
+            <select id="flmAccess">
+              <option value="">Open &amp; Closed</option>
+              <option value="Anyone Welcome">Open</option>
+              <option value="Members Only">Closed</option>
+            </select>
+          </div>
+          <div class="form-group flm-filters-full">
+            <label>Meeting Mode</label>
+            <select id="flmMode">
+              <option value="">In-Person &amp; Virtual</option>
+              <option value="In-Person">In-Person Only</option>
+              <option value="Virtual">Virtual Only</option>
+              <option value="Hybrid">Hybrid Only</option>
+            </select>
+          </div>
         </div>
         <button class="btn btn-primary" id="flmSearchBtn" onclick="findLocalMeetingsSearch()" style="width:100%;">
           <span id="flmSearchText">Search Meetings</span>
@@ -10873,6 +10917,10 @@ function filterFlmResults(results) {
   });
 }
 
+var _flmAllResults = [];
+var _flmVisibleCount = 0;
+var _flmPageSize = 15;
+
 function displayFlmResults(results, location, stats) {
   const container = document.getElementById('flmResults');
   const list = document.getElementById('flmResultsList');
@@ -10880,6 +10928,8 @@ function displayFlmResults(results, location, stats) {
   const locEl = document.getElementById('flmResultsLocation');
 
   list.innerHTML = '';
+  _flmAllResults = results || [];
+  _flmVisibleCount = 0;
 
   if (!results || results.length === 0) {
     countEl.textContent = 'No meetings found';
@@ -10891,9 +10941,24 @@ function displayFlmResults(results, location, stats) {
   countEl.textContent = results.length + ' meeting' + (results.length === 1 ? '' : 's') + ' found';
   locEl.textContent = location ? location.split(',').slice(0, 2).join(',') : '';
 
+  _flmRenderPage();
+  container.style.display = 'block';
+  setTimeout(() => list.scrollTop = 0, 50);
+}
+
+function _flmRenderPage() {
+  const list = document.getElementById('flmResultsList');
+  const results = _flmAllResults;
+  const end = Math.min(_flmVisibleCount + _flmPageSize, results.length);
+
+  // Remove existing Load More button
+  var existingBtn = list.querySelector('.flm-load-more');
+  if (existingBtn) existingBtn.remove();
+
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  results.forEach((m, i) => {
+  for (var i = _flmVisibleCount; i < end; i++) { (function(i) {
+    const m = results[i];
     const card = document.createElement('div');
     card.className = 'flm-card';
 
@@ -10952,10 +11017,18 @@ function displayFlmResults(results, location, stats) {
     });
 
     list.appendChild(card);
-  });
+  })(i); }
 
-  container.style.display = 'block';
-  setTimeout(() => list.scrollTop = 0, 50);
+  _flmVisibleCount = end;
+
+  // Add Load More button if there are more results
+  if (_flmVisibleCount < results.length) {
+    var btn = document.createElement('button');
+    btn.className = 'flm-load-more';
+    btn.textContent = 'Load More (' + (_flmAllResults.length - _flmVisibleCount) + ' remaining)';
+    btn.onclick = function() { _flmRenderPage(); };
+    list.appendChild(btn);
+  }
 }
 
 function escapeHTML(str) {
