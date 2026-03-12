@@ -3409,27 +3409,22 @@
   }
   .undo-toast-btn:hover { text-decoration: underline; }
 
-  /* === TOP BANNER (auth success etc.) === */
-  .top-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 9999;
-    background: var(--ink);
-    color: var(--white);
-    text-align: center;
-    padding: 12px 20px;
-    font-size: 13px;
+  /* === NAV WELCOME MESSAGE === */
+  .nav-welcome-msg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    transform: translateY(-100%);
+    color: var(--ink-faint);
+    white-space: nowrap;
     opacity: 0;
-    transition: transform 0.35s ease, opacity 0.3s ease;
+    transition: opacity 0.4s ease;
     pointer-events: none;
   }
-  .top-banner.visible {
-    transform: translateY(0);
+  .nav-welcome-msg.visible {
     opacity: 1;
   }
 
@@ -4523,6 +4518,7 @@
 
   /* === MOBILE TOP NAV === */
   @media (max-width: 700px) {
+    .nav-welcome-msg { font-size: 11px; }
     .top-nav {
       gap: 6px;
       padding: 10px 12px;
@@ -5929,6 +5925,7 @@
 
 <!-- TOP NAV -->
 <div class="top-nav">
+  <span class="nav-welcome-msg" id="navWelcomeMsg"></span>
   <button class="nav-darkmode-btn" id="navDarkmodeBtn" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
     <span class="darkmode-icon-sun"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg></span>
     <span class="darkmode-icon-moon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" stroke="none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></span>
@@ -8098,8 +8095,7 @@
 <!-- CURSOR TOOLTIP -->
 <div id="cursorTooltip"></div>
 
-<!-- TOP BANNER -->
-<div class="top-banner" id="topBanner"></div>
+<!-- TOP BANNER (removed — now inline in nav) -->
 
 <!-- UNDO TOAST -->
 <div class="undo-toast" id="undoToast">
@@ -13290,10 +13286,12 @@ function resetFullProject() {
 }
 
 function showTopBanner(msg) {
-  var banner = document.getElementById('topBanner');
-  banner.textContent = msg;
-  banner.classList.add('visible');
-  setTimeout(function() { banner.classList.remove('visible'); }, 2200);
+  var el = document.getElementById('navWelcomeMsg');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('visible');
+  setTimeout(function() { el.classList.remove('visible'); }, 3000);
+  setTimeout(function() { el.textContent = ''; }, 3400);
 }
 
 function showToast(msg) {
