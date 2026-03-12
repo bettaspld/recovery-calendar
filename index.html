@@ -8503,6 +8503,8 @@ function loadUserDataFromFirebase() {
         localStorage.setItem('recoverySobrietyCollapsed', userData.sobriety.collapsed);
       }
     }
+    // Re-render sobriety bar with fresh Firebase data and restart live clock
+    if (typeof window._sobrietyRerender === 'function') window._sobrietyRerender();
 
     render();
     requestAnimationFrame(function() { updateMeetingsSlider(false); updateViewSlider(false); });
@@ -13060,6 +13062,9 @@ init();
       }
     }
   });
+
+  // Expose for Firebase reload
+  window._sobrietyRerender = function() { renderSobrietyBar(); startTick(); };
 
   // Initial render and start ticking
   renderSobrietyBar();
