@@ -756,16 +756,18 @@
   /* === FILTER BAR === */
   .filter-bar {
     background: color-mix(in srgb, var(--ink) 85%, var(--paper));
-    padding: 0;
+    padding: 0 0 4px;
+    margin-bottom: 2px;
     animation: navFadeIn 0.4s ease 0.2s both;
   }
 
   /* === Tab headers === */
   .filter-tabs {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     padding: 0;
     background: var(--ink);
+    position: relative;
   }
   .filter-tab {
     font-family: inherit;
@@ -776,16 +778,20 @@
     padding: 14px 24px;
     border: none;
     background: transparent;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.65);
     cursor: pointer;
-    transition: color 0.2s, background 0.2s, border-radius 0.2s;
+    transition: color 0.2s, background 0.2s;
     position: relative;
+    z-index: 1;
   }
-  .filter-tab:hover { color: rgba(255,255,255,0.7); }
+  .filter-tab:hover { color: rgba(255,255,255,0.85); }
   .filter-tab.active {
     color: var(--white);
     background: color-mix(in srgb, var(--ink) 85%, var(--paper));
     border-radius: 10px 10px 0 0;
+    margin-top: -4px;
+    padding-top: 14px;
+    border-top: 3px solid var(--accent);
   }
 
   /* === Controls row: sliding pill toggles === */
@@ -794,12 +800,13 @@
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding: 14px 20px 10px;
+    padding: 16px 20px 14px;
   }
   .filter-pill-group {
     display: flex;
     position: relative;
-    background: color-mix(in srgb, var(--ink) 50%, transparent);
+    background: var(--ink);
+    border: 1.5px solid rgba(255,255,255,0.3);
     border-radius: 999px;
     height: 28px;
     padding: 2px;
@@ -824,7 +831,7 @@
     border: none;
     border-radius: 999px;
     background: transparent;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.7);
     cursor: pointer;
     transition: color 0.3s ease;
     display: flex;
@@ -835,18 +842,25 @@
     outline: none;
   }
   .filter-pill:hover {
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.9);
   }
   .filter-pill.active {
     color: var(--white);
     background: transparent;
   }
 
+  /* === Divider between pills and chips === */
+  .filter-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    margin: 0 0 14px;
+  }
+
   /* === Clear row (bottom-right of chips) === */
   .filter-clear-row {
     display: flex;
     justify-content: flex-end;
-    padding: 6px 0 0;
+    padding: 8px 0 2px;
   }
   .filter-clear-btn {
     font-family: inherit;
@@ -863,19 +877,19 @@
   }
   .filter-clear-btn:hover { color: var(--white); }
 
-  /* === Tab panels (collapsed by default, slide open) === */
-  .filter-tab-panel {
-    max-height: 0;
+  /* === Tab panel wrapper: smooth height transitions === */
+  .filter-panel-wrap {
     overflow: hidden;
-    opacity: 0;
-    padding: 0 24px;
-    transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* === Tab panels === */
+  .filter-tab-panel {
+    display: none;
+    padding: 0 24px 16px;
   }
   .filter-tab-panel.active {
-    max-height: 800px;
-    opacity: 1;
-    padding: 0 24px 16px;
-    transition: max-height 0.3s ease, opacity 0.25s ease 0.05s, padding 0.3s ease;
+    display: block;
   }
 
   /* Remove old compat */
@@ -1103,7 +1117,7 @@
     }
     .filter-controls-row {
       gap: 10px;
-      padding: 10px 14px 8px;
+      padding: 12px 14px 10px;
     }
     .filter-pill {
       font-size: 8px;
@@ -1122,7 +1136,7 @@
     .filter-controls-row {
       flex-wrap: wrap;
       gap: 8px;
-      padding: 8px 12px 6px;
+      padding: 10px 12px 8px;
     }
     .filter-pill {
       font-size: 7px;
@@ -1132,9 +1146,6 @@
       height: 22px;
     }
     .filter-tab-panel {
-      padding: 0 12px;
-    }
-    .filter-tab-panel.active {
       padding: 0 12px 12px;
     }
     .chip {
@@ -5561,38 +5572,41 @@
     <button class="filter-tab" data-tab="location" onclick="switchFilterTab('location')">Location</button>
   </div>
 
-  <!-- Tab panels (collapsed by default) -->
-  <div class="filter-tab-panel" id="filterTabType">
-    <!-- Sliding pill toggles: Access + Gender -->
-    <div class="filter-controls-row">
-      <div class="filter-pill-group" id="accessPillGroup">
-        <div class="filter-pill-slider" id="accessPillSlider"></div>
-        <button class="filter-pill active" onclick="setAccessFilter(this, '')" data-val="">All</button>
-        <button class="filter-pill" onclick="setAccessFilter(this, 'Anyone Welcome')" data-val="Anyone Welcome">Open</button>
-        <button class="filter-pill" onclick="setAccessFilter(this, 'Members Only')" data-val="Members Only">Closed</button>
+  <!-- Panel wrapper: animates height smoothly between tabs -->
+  <div class="filter-panel-wrap" id="filterPanelWrap">
+    <div class="filter-tab-panel" id="filterTabType">
+      <!-- Sliding pill toggles: Access + Gender -->
+      <div class="filter-controls-row">
+        <div class="filter-pill-group" id="accessPillGroup">
+          <div class="filter-pill-slider" id="accessPillSlider"></div>
+          <button class="filter-pill active" onclick="setAccessFilter(this, '')" data-val="">All</button>
+          <button class="filter-pill" onclick="setAccessFilter(this, 'Anyone Welcome')" data-val="Anyone Welcome">Open</button>
+          <button class="filter-pill" onclick="setAccessFilter(this, 'Members Only')" data-val="Members Only">Closed</button>
+        </div>
+        <div class="filter-pill-group" id="genderPillGroup">
+          <div class="filter-pill-slider" id="genderPillSlider"></div>
+          <button class="filter-pill active" onclick="setGenderFilter(this, '')" data-val="">All</button>
+          <button class="filter-pill" onclick="setGenderFilter(this, 'Men')" data-val="Men">Mens</button>
+          <button class="filter-pill" onclick="setGenderFilter(this, 'Women')" data-val="Women">Womens</button>
+        </div>
       </div>
-      <div class="filter-pill-group" id="genderPillGroup">
-        <div class="filter-pill-slider" id="genderPillSlider"></div>
-        <button class="filter-pill active" onclick="setGenderFilter(this, '')" data-val="">All</button>
-        <button class="filter-pill" onclick="setGenderFilter(this, 'Men')" data-val="Men">Mens</button>
-        <button class="filter-pill" onclick="setGenderFilter(this, 'Women')" data-val="Women">Womens</button>
+      <hr class="filter-divider">
+      <div class="chip-wrap" id="chipsFellowship"></div>
+      <div class="filter-clear-row">
+        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
       </div>
     </div>
-    <div class="chip-wrap" id="chipsFellowship"></div>
-    <div class="filter-clear-row">
-      <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+    <div class="filter-tab-panel" id="filterTabFormat">
+      <div class="chip-wrap" id="chipsFormat" style="padding-top: 14px;"></div>
+      <div class="filter-clear-row">
+        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+      </div>
     </div>
-  </div>
-  <div class="filter-tab-panel" id="filterTabFormat">
-    <div class="chip-wrap" id="chipsFormat"></div>
-    <div class="filter-clear-row">
-      <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
-    </div>
-  </div>
-  <div class="filter-tab-panel" id="filterTabLocation">
-    <div class="chip-wrap" id="chipsPlace"></div>
-    <div class="filter-clear-row">
-      <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+    <div class="filter-tab-panel" id="filterTabLocation">
+      <div class="chip-wrap" id="chipsPlace" style="padding-top: 14px;"></div>
+      <div class="filter-clear-row">
+        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+      </div>
     </div>
   </div>
 </div>
@@ -8860,6 +8874,11 @@ var filterChipIds = {
 function switchFilterTab(tab) {
   var currentTab = document.querySelector('.filter-tab.active');
   var isClosing = currentTab && currentTab.getAttribute('data-tab') === tab;
+  var wrap = document.getElementById('filterPanelWrap');
+  var panels = { type: 'filterTabType', format: 'filterTabFormat', location: 'filterTabLocation' };
+
+  // Capture current height for smooth transition
+  var currentHeight = wrap.offsetHeight;
 
   // Update tab buttons
   document.querySelectorAll('.filter-tab').forEach(function(t) {
@@ -8869,15 +8888,15 @@ function switchFilterTab(tab) {
       t.classList.toggle('active', t.getAttribute('data-tab') === tab);
     }
   });
-  // Show/hide panels
-  if (isClosing) {
-    document.getElementById('filterTabType').classList.remove('active');
-    document.getElementById('filterTabFormat').classList.remove('active');
-    document.getElementById('filterTabLocation').classList.remove('active');
-  } else {
-    document.getElementById('filterTabType').classList.toggle('active', tab === 'type');
-    document.getElementById('filterTabFormat').classList.toggle('active', tab === 'format');
-    document.getElementById('filterTabLocation').classList.toggle('active', tab === 'location');
+
+  // Hide all panels first
+  Object.values(panels).forEach(function(id) {
+    document.getElementById(id).classList.remove('active');
+  });
+
+  if (!isClosing) {
+    // Show the target panel
+    document.getElementById(panels[tab]).classList.add('active');
     // Init pill sliders when opening Meeting Type tab
     if (tab === 'type') {
       requestAnimationFrame(function() {
@@ -8886,6 +8905,19 @@ function switchFilterTab(tab) {
       });
     }
   }
+
+  // Animate height: set from current → measure new → animate
+  var newHeight = isClosing ? 0 : wrap.scrollHeight;
+  wrap.style.height = currentHeight + 'px';
+  wrap.offsetHeight; // force reflow
+  wrap.style.height = newHeight + 'px';
+
+  // Clean up after transition
+  var onEnd = function() {
+    wrap.removeEventListener('transitionend', onEnd);
+    if (!isClosing) wrap.style.height = 'auto';
+  };
+  wrap.addEventListener('transitionend', onEnd);
 }
 
 // === Sliding pill animation ===
