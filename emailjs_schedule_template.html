@@ -4,73 +4,74 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="margin:0;padding:0;background-color:#EAE4DD;font-family:'Century Gothic','Futura PT',Avenir,'Avenir Next',sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#EAE4DD;padding:32px 16px;">
+<body style="margin:0;padding:0;background-color:{{color_paper}};font-family:'Century Gothic','Futura PT',Avenir,'Avenir Next','Trebuchet MS',sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:{{color_paper}};padding:32px 16px;">
     <tr>
       <td align="center">
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background-color:#ffffff;border-radius:3px;overflow:hidden;">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background-color:#ffffff;border-radius:6px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
 
-          <!-- Header with accent bar -->
+          <!-- Accent bar -->
           <tr>
-            <td style="background-color:#E49B1D;height:4px;font-size:0;line-height:0;">&nbsp;</td>
+            <td style="background-color:{{color_accent}};height:4px;font-size:0;line-height:0;">&nbsp;</td>
           </tr>
 
-          <!-- Logo / Title area -->
+          <!-- Logo -->
           <tr>
-            <td style="padding:36px 40px 20px;text-align:center;">
-              <div style="font-size:28px;font-weight:700;color:#313131;letter-spacing:-0.5px;line-height:1.2;">RECOVERY CALENDAR</div>
-              <div style="font-size:12px;color:#8a7a62;letter-spacing:2px;text-transform:uppercase;margin-top:6px;">Your Meeting Schedule</div>
+            <td style="padding:36px 40px 8px;text-align:center;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:{{color_accent}};">Recovery Calendar</div>
+            </td>
+          </tr>
+
+          <!-- Headline -->
+          <tr>
+            <td style="padding:12px 40px 4px;text-align:center;">
+              <div style="font-size:22px;font-weight:700;color:{{color_ink}};line-height:1.2;">{{subject}}</div>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding:8px 40px 24px;text-align:center;">
+              <div style="font-size:14px;color:{{color_ink_faint}};line-height:1.6;">Hi {{user_name}} — here's your {{view_label}} at a glance.</div>
             </td>
           </tr>
 
           <!-- Divider -->
           <tr>
             <td style="padding:0 40px;">
-              <div style="border-top:1px solid rgba(49,49,49,0.12);"></div>
+              <div style="border-top:1px solid rgba(0,0,0,0.08);"></div>
             </td>
           </tr>
 
-          <!-- Greeting -->
+          <!-- Schedule table (HTML version) -->
           <tr>
-            <td style="padding:28px 40px 12px;">
-              <div style="font-size:18px;font-weight:700;color:#313131;">Hi {{to_name}}, here's your schedule</div>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0 40px 20px;">
-              <div style="font-size:14px;color:#5a4a32;line-height:1.6;">
-                Below is your current meeting schedule from Recovery Calendar. Keep this email for quick reference, or open the app to make changes.
-              </div>
-            </td>
-          </tr>
-
-          <!-- Schedule content -->
-          <tr>
-            <td style="padding:0 40px 24px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F5F0EB;border-radius:3px;">
-                <tr>
-                  <td style="padding:20px 24px;">
-                    <div style="font-size:13px;font-weight:700;color:#E49B1D;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Your Meetings</div>
-                    <div style="font-size:13px;color:#313131;line-height:1.8;">
-                      {{{schedule_html}}}
-                    </div>
-                  </td>
-                </tr>
+            <td style="padding:8px 32px 24px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                {{{meetings_html}}}
               </table>
             </td>
           </tr>
 
-          <!-- CTA Button -->
+          <!-- Meeting count badge -->
           <tr>
-            <td style="padding:8px 40px 12px;text-align:center;">
-              <a href="{{app_url}}" target="_blank" style="display:inline-block;background-color:#E49B1D;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;padding:14px 40px;border-radius:3px;letter-spacing:0.5px;">Open Your Calendar</a>
+            <td style="padding:0 40px 24px;text-align:center;">
+              <div style="display:inline-block;background-color:{{color_paper}};border-radius:999px;padding:8px 20px;">
+                <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:{{color_ink_faint}};">{{meeting_count}} meetings</span>
+              </div>
             </td>
           </tr>
 
-          <!-- Motivational note -->
+          <!-- CTA -->
+          <tr>
+            <td style="padding:0 40px 12px;text-align:center;">
+              <a href="https://recoverycalendar.app" target="_blank" style="display:inline-block;background-color:{{color_accent}};color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;padding:14px 44px;border-radius:999px;letter-spacing:1px;text-transform:uppercase;">Open Your Calendar</a>
+            </td>
+          </tr>
+
+          <!-- Note -->
           <tr>
             <td style="padding:16px 40px 8px;text-align:center;">
-              <div style="font-size:12px;color:#8a7a62;line-height:1.6;font-style:italic;">
+              <div style="font-size:12px;color:{{color_ink_faint}};line-height:1.6;font-style:italic;">
                 Keep showing up. Every meeting counts.
               </div>
             </td>
@@ -78,17 +79,20 @@
 
           <!-- Divider -->
           <tr>
-            <td style="padding:20px 40px 0;">
-              <div style="border-top:1px solid rgba(49,49,49,0.12);"></div>
+            <td style="padding:24px 40px 0;">
+              <div style="border-top:1px solid rgba(0,0,0,0.08);"></div>
             </td>
           </tr>
 
           <!-- Footer -->
           <tr>
             <td style="padding:20px 40px 32px;text-align:center;">
-              <div style="font-size:11px;color:#8a7a62;line-height:1.6;">
-                RECOVERY CALENDAR &mdash; One day at a time.<br>
-                <a href="{{app_url}}" style="color:#E49B1D;text-decoration:none;">recoverycalendar.app</a>
+              <div style="font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:{{color_ink_faint}};line-height:1.8;">
+                Recovery Calendar<br>
+                <span style="font-weight:400;letter-spacing:0;">One day at a time.</span>
+              </div>
+              <div style="margin-top:8px;">
+                <a href="https://recoverycalendar.app" style="font-size:11px;color:{{color_accent}};text-decoration:none;">recoverycalendar.app</a>
               </div>
             </td>
           </tr>

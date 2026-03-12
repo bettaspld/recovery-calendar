@@ -4443,8 +4443,8 @@
   @media (max-width: 700px) {
     /* Landing page mobile adjustments */
     #landingPage {
-      padding: 8vh 20px 32px;
-      padding-top: max(8vh, calc(env(safe-area-inset-top) + 4vh));
+      padding: 14vh 20px 32px;
+      padding-top: max(14vh, calc(env(safe-area-inset-top) + 10vh));
     }
     .landing-icon {
       margin-bottom: 14px;
@@ -5022,6 +5022,71 @@
   }
   [data-paper="dark"] .admin-panel {
     background: var(--paper-dark);
+  }
+
+  /* Admin email tester */
+  .admin-email-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .admin-email-btn {
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--white, #fff);
+    border: 1.5px solid var(--grid-line);
+    border-radius: 8px;
+    padding: 10px 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.15s;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .admin-email-btn:hover {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 6%, var(--white, #fff));
+  }
+  .admin-email-btn:active {
+    transform: scale(0.97);
+  }
+  .admin-email-btn.sending {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .admin-email-btn .admin-email-icon {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  .admin-theme-select {
+    width: 100%;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--white, #fff);
+    border: 1.5px solid var(--grid-line);
+    border-radius: 6px;
+    padding: 8px 10px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .admin-email-status {
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 6px;
+    min-height: 14px;
+  }
+  .admin-email-to {
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 4px;
   }
 
   /* === HOW TO USE GUIDE === */
@@ -6670,6 +6735,42 @@
     </div>
 
     <div class="admin-section">
+      <span class="admin-section-title">Email Testing</span>
+      <div class="admin-email-to" id="adminEmailTo">Send to: —</div>
+      <label style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint);display:block;margin-top:10px;">Preview Theme</label>
+      <select class="admin-theme-select" id="adminEmailTheme" onchange="adminUpdateEmailThemePreview()">
+        <option value="current">Current Theme (Live)</option>
+        <option value="orange-default-default">Gold / Default / Default Paper</option>
+        <option value="teal-forest-default">Teal / Forest / Default Paper</option>
+        <option value="blue-navy-cool">Blue / Navy / Cool Paper</option>
+        <option value="red-wine-rose">Red / Wine / Rose Paper</option>
+        <option value="purple-midnight-fog">Purple / Midnight / Fog Paper</option>
+        <option value="green-default-sage">Green / Default / Sage Paper</option>
+        <option value="orange-espresso-warm">Gold / Espresso / Warm Paper</option>
+        <option value="teal-slate-cool">Teal / Slate / Cool Paper</option>
+      </select>
+      <div class="admin-email-grid">
+        <button class="admin-email-btn" onclick="adminTestEmail('welcome')">
+          <span class="admin-email-icon">&#128075;</span>
+          Welcome
+        </button>
+        <button class="admin-email-btn" onclick="adminTestEmail('verification')">
+          <span class="admin-email-icon">&#9989;</span>
+          Verification
+        </button>
+        <button class="admin-email-btn" onclick="adminTestEmail('week')">
+          <span class="admin-email-icon">&#128197;</span>
+          Week Schedule
+        </button>
+        <button class="admin-email-btn" onclick="adminTestEmail('month')">
+          <span class="admin-email-icon">&#128198;</span>
+          Month Schedule
+        </button>
+      </div>
+      <div class="admin-email-status" id="adminEmailStatus"></div>
+    </div>
+
+    <div class="admin-section">
       <span class="admin-section-title">Debug Info</span>
       <div class="admin-status">
         User: <span id="adminUserEmail">—</span><br>
@@ -7625,11 +7726,6 @@ try {
 }
 
 // === EMAILJS CONFIG ===
-// To enable welcome emails and email-schedule:
-// 1. Sign up at emailjs.com (free: 200 emails/month)
-// 2. Create a Gmail service and note the Service ID
-// 3. Create templates: 'welcome_email' and 'schedule_email'
-// 4. Replace these placeholder values with your real IDs
 var EMAILJS_PUBLIC_KEY = '_qTlu1IWt5NcQ1cFw';
 var EMAILJS_SERVICE_ID = 'service_gkpt91s';
 var EMAILJS_WELCOME_TEMPLATE = 'welcome_email';
@@ -7643,13 +7739,39 @@ try {
   console.log('EmailJS not configured');
 }
 
+// Get current theme colors as hex values for email templates
+function getEmailThemeColors() {
+  var style = getComputedStyle(document.documentElement);
+  function toHex(val) {
+    val = (val || '').trim();
+    if (val.startsWith('#')) return val;
+    var m = val.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (m) return '#' + [m[1],m[2],m[3]].map(function(x) { return parseInt(x).toString(16).padStart(2,'0'); }).join('');
+    return val || '#313131';
+  }
+  return {
+    accent: toHex(style.getPropertyValue('--accent')),
+    accent_dark: toHex(style.getPropertyValue('--accent-dark')),
+    ink: toHex(style.getPropertyValue('--ink')),
+    ink_light: toHex(style.getPropertyValue('--ink-light')),
+    ink_faint: toHex(style.getPropertyValue('--ink-faint')),
+    paper: toHex(style.getPropertyValue('--paper')),
+    paper_dark: toHex(style.getPropertyValue('--paper-dark'))
+  };
+}
+
 function sendWelcomeEmail(email, firstName) {
   if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID) return;
   try {
+    var c = getEmailThemeColors();
     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_WELCOME_TEMPLATE, {
       to_email: email,
       user_name: firstName || 'there',
-      app_url: 'https://recoverycalendar.app'
+      app_url: 'https://recoverycalendar.app',
+      color_accent: c.accent,
+      color_ink: c.ink,
+      color_ink_faint: c.ink_faint,
+      color_paper: c.paper
     }).catch(function(e) { console.log('Welcome email failed:', e); });
   } catch(e) { /* non-blocking */ }
 }
@@ -7663,6 +7785,7 @@ function emailScheduleToUser() {
     showToast('Email service not configured yet');
     return;
   }
+  var c = getEmailThemeColors();
   var userName = localStorage.getItem('recoveryFirstName') || currentUser.displayName || 'Friend';
   var list = meetings.map(function(m) {
     var day = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][m.day] || '';
@@ -7674,7 +7797,11 @@ function emailScheduleToUser() {
     to_email: currentUser.email,
     user_name: userName,
     meetings_list: list,
-    meeting_count: meetings.length
+    meeting_count: meetings.length,
+    color_accent: c.accent,
+    color_ink: c.ink,
+    color_ink_faint: c.ink_faint,
+    color_paper: c.paper
   }).then(function() {
     showToast('Schedule emailed to ' + currentUser.email);
   }).catch(function(e) {
@@ -7816,6 +7943,11 @@ function openAdminPanel() {
   if (paperEl) paperEl.textContent = localStorage.getItem('recoveryPaper') || 'default';
   var fontEl = document.getElementById('adminFontStatus');
   if (fontEl) fontEl.textContent = localStorage.getItem('recoveryFontSize') || 'default';
+  // Update email target
+  var emailToEl = document.getElementById('adminEmailTo');
+  if (emailToEl) emailToEl.textContent = 'Send to: ' + (currentUser ? currentUser.email : 'Sign in first');
+  var emailStatusEl = document.getElementById('adminEmailStatus');
+  if (emailStatusEl) emailStatusEl.textContent = '';
   // Update demo button label
   var demoLabel = document.getElementById('adminDemoLabel');
   var demoDesc = document.getElementById('adminDemoDesc');
@@ -7913,6 +8045,152 @@ function adminFullReset() {
     auth.signOut().then(function() { location.reload(); });
   } else {
     location.reload();
+  }
+}
+
+// === ADMIN EMAIL TESTING ===
+var _adminEmailThemeMap = {
+  'orange-default-default': { accent: '#E49B1D', ink: '#313131', ink_faint: '#8a7a62', paper: '#EAE4DD' },
+  'teal-forest-default':    { accent: '#3AAFA9', ink: '#1A3328', ink_faint: '#5A7A68', paper: '#EAE4DD' },
+  'blue-navy-cool':         { accent: '#4A90D9', ink: '#1B2A4A', ink_faint: '#5A6B8A', paper: '#E4E8ED' },
+  'red-wine-rose':          { accent: '#C75B5B', ink: '#3B1929', ink_faint: '#8A5A6E', paper: '#F0E2E0' },
+  'purple-midnight-fog':    { accent: '#8E6BBF', ink: '#1A1A2E', ink_faint: '#5E5E7A', paper: '#EDEDED' },
+  'green-default-sage':     { accent: '#5A9E6F', ink: '#313131', ink_faint: '#8a7a62', paper: '#E0E8E0' },
+  'orange-espresso-warm':   { accent: '#E49B1D', ink: '#2C1A0E', ink_faint: '#7A6050', paper: '#F5EDE0' },
+  'teal-slate-cool':        { accent: '#3AAFA9', ink: '#2D3436', ink_faint: '#717B7E', paper: '#E4E8ED' }
+};
+
+function adminGetTestColors() {
+  var sel = document.getElementById('adminEmailTheme');
+  if (!sel || sel.value === 'current') return getEmailThemeColors();
+  return _adminEmailThemeMap[sel.value] || getEmailThemeColors();
+}
+
+function adminTestEmail(type) {
+  var statusEl = document.getElementById('adminEmailStatus');
+  var email = currentUser ? currentUser.email : null;
+  if (!email) { statusEl.textContent = 'Sign in to send test emails'; return; }
+  if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID) { statusEl.textContent = 'EmailJS not configured'; return; }
+
+  var c = adminGetTestColors();
+  var userName = localStorage.getItem('recoveryFirstName') || 'Joel';
+
+  // Disable buttons
+  document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.add('sending'); });
+  statusEl.textContent = 'Sending ' + type + ' email...';
+
+  if (type === 'verification') {
+    // Firebase verification email — re-sends the built-in one
+    if (currentUser && currentUser.sendEmailVerification) {
+      currentUser.sendEmailVerification().then(function() {
+        statusEl.textContent = 'Verification email sent to ' + email;
+      }).catch(function(e) {
+        statusEl.textContent = 'Error: ' + (e.message || e);
+      }).finally(function() {
+        document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+      });
+    } else {
+      statusEl.textContent = 'Firebase auth not available';
+      document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+    }
+    return;
+  }
+
+  if (type === 'welcome') {
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_WELCOME_TEMPLATE, {
+      to_email: email,
+      user_name: userName,
+      app_url: 'https://recoverycalendar.app',
+      color_accent: c.accent,
+      color_ink: c.ink,
+      color_ink_faint: c.ink_faint,
+      color_paper: c.paper
+    }).then(function() {
+      statusEl.textContent = 'Welcome email sent to ' + email;
+    }).catch(function(e) {
+      statusEl.textContent = 'Error: ' + (e.text || e);
+    }).finally(function() {
+      document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+    });
+    return;
+  }
+
+  // Week or month schedule
+  var isWeek = (type === 'week');
+  var sampleMeetings = meetings && meetings.length > 0 ? meetings : [
+    { name: 'Morning Serenity', day: 1, time: '07:00', fellowship: 'AA', format: 'Speaker', location: 'Community Center', access: 'Anyone Welcome' },
+    { name: 'Noon Recovery', day: 1, time: '12:00', fellowship: 'NA', format: 'Discussion', location: 'Church Hall', access: 'Anyone Welcome' },
+    { name: 'Sunset Group', day: 3, time: '18:30', fellowship: 'AA', format: 'Big Book', location: 'Rec Center', access: 'Anyone Welcome' },
+    { name: 'Women\'s Circle', day: 5, time: '10:00', fellowship: 'AA', format: 'Discussion', location: 'Unity Club', access: 'Anyone Welcome', gender: 'Women' }
+  ];
+
+  // Build dates for the current view
+  var startDate = isWeek ? new Date(currentWeekStart) : new Date(currentMonth || new Date());
+  if (!isWeek) { startDate.setDate(1); }
+  var endDate = new Date(startDate);
+  if (isWeek) { endDate.setDate(endDate.getDate() + 6); }
+  else { endDate.setMonth(endDate.getMonth() + 1); endDate.setDate(0); }
+
+  var subject = isWeek
+    ? 'My Recovery Meetings — ' + MONTH_NAMES[startDate.getMonth()] + ' ' + startDate.getDate() + '–' + endDate.getDate() + ', ' + endDate.getFullYear()
+    : 'My Recovery Meetings — ' + MONTH_NAMES[startDate.getMonth()] + ' ' + startDate.getFullYear();
+
+  // Build HTML table rows
+  var htmlBody = '';
+  var textBody = '';
+  var meetingCount = 0;
+  var daysToShow = isWeek ? 7 : ((endDate - startDate) / 86400000) + 1;
+  for (var i = 0; i < daysToShow; i++) {
+    var d = new Date(startDate);
+    d.setDate(d.getDate() + i);
+    var dow = d.getDay();
+    var dayMeetings = sampleMeetings.filter(function(m) { return m.day == dow; });
+    if (dayMeetings.length === 0) continue;
+    dayMeetings.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
+    var dayLabel = DAY_NAMES_FULL[dow] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate();
+    htmlBody += '<tr><td style="padding:16px 0 6px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + c.accent + ';border-bottom:1px solid #eee;" colspan="3">' + dayLabel + '</td></tr>';
+    textBody += dayLabel + '\n';
+    dayMeetings.forEach(function(m) {
+      var time = typeof formatTime === 'function' ? formatTime(m.time) : m.time;
+      htmlBody += '<tr><td style="padding:8px 0;font-size:13px;color:' + c.ink_faint + ';white-space:nowrap;vertical-align:top;width:70px;">' + time + '</td>';
+      htmlBody += '<td style="padding:8px 8px;font-size:13px;font-weight:600;color:' + c.ink + ';vertical-align:top;">' + m.name + (m.fellowship ? ' <span style="font-weight:400;color:' + c.ink_faint + ';">(' + m.fellowship + ')</span>' : '') + '</td>';
+      htmlBody += '<td style="padding:8px 0;font-size:12px;color:' + c.ink_faint + ';vertical-align:top;">' + (m.location || '') + '</td></tr>';
+      textBody += '  ' + time + ' — ' + m.name + (m.fellowship ? ' (' + m.fellowship + ')' : '') + (m.location ? ' @ ' + m.location : '') + '\n';
+      meetingCount++;
+    });
+    textBody += '\n';
+  }
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_SCHEDULE_TEMPLATE, {
+    to_email: email,
+    user_name: userName,
+    subject: subject,
+    meetings_list: textBody,
+    meetings_html: htmlBody,
+    meeting_count: meetingCount,
+    view_label: isWeek ? 'Week' : 'Month',
+    color_accent: c.accent,
+    color_ink: c.ink,
+    color_ink_faint: c.ink_faint,
+    color_paper: c.paper
+  }).then(function() {
+    statusEl.textContent = (isWeek ? 'Week' : 'Month') + ' schedule sent to ' + email;
+  }).catch(function(e) {
+    statusEl.textContent = 'Error: ' + (e.text || e);
+  }).finally(function() {
+    document.querySelectorAll('.admin-email-btn').forEach(function(b) { b.classList.remove('sending'); });
+  });
+}
+
+function adminUpdateEmailThemePreview() {
+  // Just visual feedback — the theme is applied when sending
+  var sel = document.getElementById('adminEmailTheme');
+  var statusEl = document.getElementById('adminEmailStatus');
+  if (sel.value === 'current') {
+    statusEl.textContent = 'Using your current live theme';
+  } else {
+    var label = sel.options[sel.selectedIndex].text;
+    statusEl.textContent = 'Preview: ' + label;
   }
 }
 
@@ -10811,6 +11089,22 @@ function emailViewSchedule() {
 
   var userEmail = (currentUser && currentUser.email) ? currentUser.email : '';
 
+  // Build HTML version for EmailJS template
+  var c = getEmailThemeColors();
+  var htmlBody = '';
+  dayKeys.forEach(function(key) {
+    var g = grouped[key];
+    var dayName = DAY_NAMES_FULL[g.date.getDay()];
+    var monthName = MONTH_NAMES[g.date.getMonth()];
+    htmlBody += '<tr><td style="padding:16px 0 6px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + c.accent + ';border-bottom:1px solid #eee;" colspan="3">' + dayName + ', ' + monthName + ' ' + g.date.getDate() + '</td></tr>';
+    g.meetings.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
+    g.meetings.forEach(function(m) {
+      htmlBody += '<tr><td style="padding:8px 0;font-size:13px;color:' + c.ink_faint + ';white-space:nowrap;vertical-align:top;width:70px;">' + formatTime(m.time) + '</td>';
+      htmlBody += '<td style="padding:8px 8px;font-size:13px;font-weight:600;color:' + c.ink + ';vertical-align:top;">' + (m.name || '') + (m.fellowship ? ' <span style="font-weight:400;color:' + c.ink_faint + ';">(' + m.fellowship + ')</span>' : '') + '</td>';
+      htmlBody += '<td style="padding:8px 0;font-size:12px;color:' + c.ink_faint + ';vertical-align:top;">' + (m.location || '') + '</td></tr>';
+    });
+  });
+
   // If EmailJS is configured, send directly; otherwise open mailto
   if (EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && userEmail) {
     var userName = localStorage.getItem('recoveryFirstName') || currentUser.displayName || 'Friend';
@@ -10819,7 +11113,13 @@ function emailViewSchedule() {
       user_name: userName,
       subject: subject,
       meetings_list: body,
-      meeting_count: items.length
+      meetings_html: htmlBody,
+      meeting_count: items.length,
+      view_label: isWeek ? 'Week' : 'Month',
+      color_accent: c.accent,
+      color_ink: c.ink,
+      color_ink_faint: c.ink_faint,
+      color_paper: c.paper
     }).then(function() {
       showToast('Schedule emailed to ' + userEmail);
     }).catch(function() {
