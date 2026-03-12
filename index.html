@@ -757,7 +757,7 @@
   .filter-bar {
     background: color-mix(in srgb, var(--ink) 85%, var(--paper));
     padding: 0;
-    margin-top: 8px;
+    margin-top: 18px;
     margin-bottom: 10px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     animation: navFadeIn 0.4s ease 0.2s both;
@@ -862,6 +862,10 @@
   .filter-clear-row {
     display: flex;
     justify-content: flex-end;
+    padding: 0;
+    min-height: 0;
+  }
+  .filter-clear-row:has(.visible) {
     padding: 10px 0 2px;
   }
   .filter-clear-btn {
@@ -870,17 +874,29 @@
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--white);
+    color: rgba(255,255,255,0.6);
     background: transparent;
-    border: 1.5px solid rgba(255,255,255,0.3);
+    border: none;
     border-radius: 999px;
     cursor: pointer;
-    padding: 7px 16px;
-    transition: background 0.2s, border-color 0.2s;
+    padding: 7px 12px;
+    transition: color 0.2s, opacity 0.25s;
+    display: none;
+    align-items: center;
+    gap: 5px;
+  }
+  .filter-clear-btn.visible {
+    display: flex;
   }
   .filter-clear-btn:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.9);
+  }
+  .filter-clear-btn svg {
+    width: 10px;
+    height: 10px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    fill: none;
   }
 
   /* === Tab panel wrapper: smooth height transitions === */
@@ -3839,65 +3855,85 @@
   /* === EMPTY CALENDAR STATE === */
   .empty-calendar-state {
     text-align: center;
-    padding: 48px 24px 32px;
-    max-width: 380px;
+    padding: 40px 24px 48px;
+    max-width: 340px;
     margin: 0 auto;
-  }
-  .empty-calendar-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-    opacity: 0.7;
   }
   .empty-calendar-title {
     font-family: inherit;
-    font-size: 18px;
+    font-size: 11px;
     font-weight: 700;
-    color: var(--ink);
-    margin: 0 0 8px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
   }
   .empty-calendar-subtitle {
     font-family: inherit;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--ink-faint);
-    margin: 0 0 28px;
-    line-height: 1.5;
+    margin: 0 0 32px;
+    line-height: 1.6;
   }
   .empty-calendar-actions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    align-items: center;
+    gap: 8px;
+    align-items: stretch;
   }
   .empty-calendar-action {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     font-family: inherit;
     font-size: 13px;
     font-weight: 600;
+    letter-spacing: 0.3px;
     color: var(--ink);
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
-    border: 1.5px solid color-mix(in srgb, var(--ink) 15%, transparent);
-    border-radius: 12px;
-    padding: 12px 20px;
+    background: var(--paper);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 18px;
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.15s;
-    width: 100%;
-    max-width: 280px;
+    transition: box-shadow 0.2s, transform 0.15s;
     text-align: left;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
   .empty-calendar-action:hover {
-    background: color-mix(in srgb, var(--ink) 14%, transparent);
-    border-color: color-mix(in srgb, var(--ink) 25%, transparent);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
   }
   .empty-calendar-action:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
-  .empty-calendar-action svg {
+  .empty-calendar-action .eca-icon {
     flex-shrink: 0;
-    width: 18px;
-    height: 18px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--accent) 12%, var(--paper));
+  }
+  .empty-calendar-action .eca-icon svg {
+    width: 16px;
+    height: 16px;
     color: var(--accent);
+  }
+  .empty-calendar-action .eca-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .empty-calendar-action .eca-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .empty-calendar-action .eca-desc {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ink-faint);
   }
 
   /* Empty filter panel message */
@@ -5674,19 +5710,19 @@
       <hr class="filter-divider">
       <div class="chip-wrap" id="chipsFellowship"></div>
       <div class="filter-clear-row">
-        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear Filters</button>
+        <button class="filter-clear-btn" onclick="clearAllFilters()"><svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>Clear Filters</button>
       </div>
     </div>
     <div class="filter-tab-panel" id="filterTabFormat">
       <div class="chip-wrap" id="chipsFormat" style="padding-top: 14px;"></div>
       <div class="filter-clear-row">
-        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear Filters</button>
+        <button class="filter-clear-btn" onclick="clearAllFilters()"><svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>Clear Filters</button>
       </div>
     </div>
     <div class="filter-tab-panel" id="filterTabLocation">
       <div class="chip-wrap" id="chipsPlace" style="padding-top: 14px;"></div>
       <div class="filter-clear-row">
-        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear Filters</button>
+        <button class="filter-clear-btn" onclick="clearAllFilters()"><svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>Clear Filters</button>
       </div>
     </div>
   </div>
@@ -9042,6 +9078,7 @@ function setAccessFilter(btn, value) {
   // Update filter
   filters.access.clear();
   if (value) filters.access.add(value);
+  updateFilterToggles();
   render();
 }
 
@@ -9056,6 +9093,7 @@ function setGenderFilter(btn, value) {
   // Update filter
   filters.gender.clear();
   if (value) filters.gender.add(value);
+  updateFilterToggles();
   render();
 }
 
@@ -9074,6 +9112,7 @@ function clearAllFilters() {
   document.querySelectorAll('.chip.selected').forEach(function(c) {
     c.classList.remove('selected');
   });
+  updateFilterToggles();
   render();
 }
 
@@ -9151,7 +9190,15 @@ function closeBottomSheet() {
 }
 
 function updateFilterToggles() {
-  // No-op in new tab design — pill/chip states are updated inline
+  // Show/hide Clear Filters buttons based on whether any filters are active
+  var hasActive = false;
+  Object.keys(filters).forEach(function(key) {
+    if (filters[key].size > 0) hasActive = true;
+  });
+  document.querySelectorAll('.filter-clear-btn').forEach(function(btn) {
+    if (hasActive) btn.classList.add('visible');
+    else btn.classList.remove('visible');
+  });
 }
 
 function clearFilter(key) {
@@ -9678,26 +9725,29 @@ function updateEmptyCalendarState() {
   var cal = document.getElementById('calendar');
   var toggleBar = document.querySelector('.meetings-toggle-bar');
   var filterBar = document.querySelector('.filter-bar');
+  var shareActions = document.getElementById('shareActions');
+  var uploadZone = document.getElementById('uploadZone');
+  var uploadParent = uploadZone ? uploadZone.parentElement : null;
   if (meetings.length === 0) {
     if (!existing) {
       var div = document.createElement('div');
       div.id = 'emptyCalendarState';
       div.className = 'empty-calendar-state';
-      div.innerHTML = '<div class="empty-calendar-icon">📅</div>' +
-        '<h2 class="empty-calendar-title">Your calendar is empty</h2>' +
-        '<p class="empty-calendar-subtitle">Get started by adding meetings to build your personal recovery schedule.</p>' +
+      div.innerHTML =
+        '<div class="empty-calendar-title">Nothing here yet</div>' +
+        '<p class="empty-calendar-subtitle">Add meetings to start building your personal recovery schedule.</p>' +
         '<div class="empty-calendar-actions">' +
-          '<button class="empty-calendar-action" onclick="document.getElementById(\'aiSearchInput\')&&document.getElementById(\'aiSearchInput\').focus();openSearch&&openSearch();">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
-            'Search for meetings nearby' +
+          '<button class="empty-calendar-action" onclick="openFindMeetings();">' +
+            '<span class="eca-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>' +
+            '<span class="eca-text"><span class="eca-label">Find meetings nearby</span><span class="eca-desc">Search by location or area</span></span>' +
           '</button>' +
-          '<button class="empty-calendar-action" onclick="if(typeof showAddMeeting===\'function\')showAddMeeting(\'scan\');">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
-            'Add from a photo or document' +
+          '<button class="empty-calendar-action" onclick="document.getElementById(\'uploadInput\').click();">' +
+            '<span class="eca-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>' +
+            '<span class="eca-text"><span class="eca-label">Import from file or photo</span><span class="eca-desc">Upload a schedule list or flyer</span></span>' +
           '</button>' +
-          '<button class="empty-calendar-action" onclick="if(typeof showAddMeeting===\'function\')showAddMeeting(\'manual\');">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
-            'Manually add a meeting' +
+          '<button class="empty-calendar-action" onclick="openModal();">' +
+            '<span class="eca-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>' +
+            '<span class="eca-text"><span class="eca-label">Add manually</span><span class="eca-desc">Enter meeting details yourself</span></span>' +
           '</button>' +
         '</div>';
       if (toggleBar) toggleBar.parentNode.insertBefore(div, toggleBar);
@@ -9705,11 +9755,15 @@ function updateEmptyCalendarState() {
     if (cal) cal.style.display = 'none';
     if (toggleBar) toggleBar.style.display = 'none';
     if (filterBar) filterBar.style.display = 'none';
+    if (shareActions) shareActions.style.display = 'none';
+    if (uploadParent) uploadParent.style.display = 'none';
   } else {
     if (existing) existing.remove();
     if (cal) cal.style.display = '';
     if (toggleBar) toggleBar.style.display = '';
     if (filterBar) filterBar.style.display = '';
+    if (shareActions) shareActions.style.display = '';
+    if (uploadParent) uploadParent.style.display = '';
   }
 }
 
