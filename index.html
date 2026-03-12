@@ -1182,7 +1182,7 @@
   .view-toggle {
     display: flex;
     position: relative;
-    background: color-mix(in srgb, var(--ink) 28%, transparent);
+    background: color-mix(in srgb, var(--ink) 18%, transparent);
     border-radius: 999px;
     height: 28px;
     padding: 2px;
@@ -1192,7 +1192,7 @@
     position: absolute;
     top: 2px;
     height: calc(100% - 4px);
-    background: color-mix(in srgb, var(--ink) 70%, var(--paper));
+    background: color-mix(in srgb, var(--ink) 60%, var(--paper));
     border-radius: 999px;
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 0;
@@ -1206,7 +1206,7 @@
     padding: 4px 14px;
     border: none;
     background: transparent;
-    color: var(--ink-faint);
+    color: var(--ink);
     cursor: pointer;
     transition: color 0.3s ease, text-shadow 0.3s ease;
     display: flex;
@@ -3840,7 +3840,7 @@
   .meetings-toggle {
     display: flex;
     position: relative;
-    background: color-mix(in srgb, var(--ink) 28%, transparent);
+    background: color-mix(in srgb, var(--ink) 18%, transparent);
     border-radius: 999px;
     height: 28px;
     padding: 2px;
@@ -3850,7 +3850,7 @@
     position: absolute;
     top: 2px;
     height: calc(100% - 4px);
-    background: color-mix(in srgb, var(--ink) 70%, var(--paper));
+    background: color-mix(in srgb, var(--ink) 60%, var(--paper));
     border-radius: 999px;
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 0;
@@ -3864,7 +3864,7 @@
     padding: 4px 14px;
     border: none;
     background: transparent;
-    color: var(--ink-faint);
+    color: var(--ink);
     cursor: pointer;
     transition: color 0.3s ease, text-shadow 0.3s ease;
     display: flex;
@@ -11830,6 +11830,13 @@ function applyUrlParams() {
     if (box && !box.classList.contains('open')) {
       box.classList.add('open');
       setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+    }
+  }
+  // Direct demo link — recoverycalendar.app?demo
+  if (params.has('demo')) {
+    if (!currentUser) {
+      enterDemoMode();
+      window.history.replaceState({}, '', window.location.pathname);
     }
   }
   // Deep link to a specific meeting from email
