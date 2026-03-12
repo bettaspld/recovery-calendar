@@ -2242,6 +2242,66 @@
   .modal-overlay.closing .modal {
     animation: modalScaleOut 0.2s ease forwards;
   }
+  /* === Custom Confirm Dialog === */
+  .confirm-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(44, 36, 22, 0.55);
+    z-index: 9999;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    animation: modalOverlayIn 0.2s ease forwards;
+  }
+  .confirm-overlay.active { display: flex; }
+  .confirm-overlay.closing { animation: modalOverlayOut 0.15s ease forwards; }
+  .confirm-box {
+    background: var(--white, #fff);
+    border-radius: 14px;
+    width: 100%; max-width: 340px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+    overflow: hidden;
+    animation: modalScaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .confirm-overlay.closing .confirm-box { animation: modalScaleOut 0.15s ease forwards; }
+  .confirm-body {
+    padding: 28px 24px 20px;
+    text-align: center;
+  }
+  .confirm-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+  }
+  .confirm-icon.warn { background: color-mix(in srgb, #E49B1D 12%, transparent); }
+  .confirm-icon.warn svg { color: #E49B1D; }
+  .confirm-icon.danger { background: color-mix(in srgb, #C75B5B 12%, transparent); }
+  .confirm-icon.danger svg { color: #C75B5B; }
+  .confirm-title {
+    font-size: 16px; font-weight: 700; color: var(--ink);
+    margin-bottom: 6px; line-height: 1.3;
+  }
+  .confirm-msg {
+    font-size: 13px; color: var(--ink-faint); line-height: 1.5;
+  }
+  .confirm-actions {
+    display: flex; border-top: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .confirm-actions button {
+    flex: 1; padding: 14px; font-family: inherit;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+    border: none; cursor: pointer; transition: background 0.15s ease;
+  }
+  .confirm-cancel {
+    background: transparent; color: var(--ink-faint);
+  }
+  .confirm-cancel:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+  .confirm-ok {
+    background: transparent; color: var(--accent);
+    border-left: 1px solid color-mix(in srgb, var(--ink) 8%, transparent) !important;
+  }
+  .confirm-ok:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .confirm-ok.danger { color: #C75B5B; }
+  .confirm-ok.danger:hover { background: color-mix(in srgb, #C75B5B 8%, transparent); }
+
   .modal-header {
     padding: 18px 24px;
     border-bottom: 1px solid var(--grid-line);
@@ -3543,8 +3603,9 @@
     margin-bottom: 2px;
   }
   .nav-dd-item svg { flex-shrink: 0; color: var(--accent); }
-  .nav-dd-logout { border-top: 1.5px solid var(--grid-line) !important; margin-top: 2px; padding-top: 14px !important; }
-  .nav-dd-logout svg { color: var(--ink-faint); }
+  .nav-dd-logout { border-top: none !important; margin-top: 2px; padding-top: 14px !important; color: #C75B5B; }
+  .nav-dd-logout svg { color: #C75B5B; }
+  .nav-dd-logout:hover { background: color-mix(in srgb, #C75B5B 8%, transparent); color: #C75B5B; }
   /* Visual Preferences sub-panel */
   .nav-dd-visual-toggle {
     position: relative;
@@ -5785,7 +5846,7 @@
           <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M7.5 7.5a2.5 2.5 0 014.5 1.5c0 1.5-2 2-2 3.5"/><circle cx="10" cy="15" r="0.5" fill="currentColor"/></svg>
           How to Use
         </button>
-        <button class="nav-dd-item" onclick="if(confirm('Reset your calendar? This will remove all meetings.'))resetProject(); closeNavMenu(); closeSettingsDropdown()">
+        <button class="nav-dd-item" onclick="closeNavMenu(); closeSettingsDropdown(); appConfirm({title:'Reset Calendar?',message:'This will remove all your meetings.',confirmLabel:'Reset',danger:true,onConfirm:resetProject})">
           <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 14a8 8 0 1 0 .49-7.54L1 10"/></svg>
           Reset Calendar
         </button>
@@ -7825,6 +7886,47 @@ try {
   console.log('Firebase not configured, using localStorage only');
 }
 
+// === CUSTOM CONFIRM DIALOG ===
+function appConfirm(opts) {
+  // opts: { title, message, confirmLabel, cancelLabel, danger, onConfirm }
+  var existing = document.querySelector('.confirm-overlay');
+  if (existing) existing.remove();
+
+  var iconType = opts.danger ? 'danger' : 'warn';
+  var iconSvg = opts.danger
+    ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+    : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+
+  var el = document.createElement('div');
+  el.className = 'confirm-overlay active';
+  el.innerHTML = '<div class="confirm-box">' +
+    '<div class="confirm-body">' +
+      '<div class="confirm-icon ' + iconType + '">' + iconSvg + '</div>' +
+      '<div class="confirm-title">' + (opts.title || 'Are you sure?') + '</div>' +
+      (opts.message ? '<div class="confirm-msg">' + opts.message + '</div>' : '') +
+    '</div>' +
+    '<div class="confirm-actions">' +
+      '<button class="confirm-cancel">' + (opts.cancelLabel || 'Cancel') + '</button>' +
+      '<button class="confirm-ok' + (opts.danger ? ' danger' : '') + '">' + (opts.confirmLabel || 'Confirm') + '</button>' +
+    '</div>' +
+  '</div>';
+
+  document.body.appendChild(el);
+
+  function close() {
+    el.classList.add('closing');
+    setTimeout(function() { el.remove(); }, 200);
+  }
+
+  el.querySelector('.confirm-cancel').onclick = close;
+  el.querySelector('.confirm-ok').onclick = function() {
+    close();
+    if (opts.onConfirm) setTimeout(opts.onConfirm, 150);
+  };
+  // Close on backdrop click
+  el.onclick = function(e) { if (e.target === el) close(); };
+}
+
 // === EMAILJS CONFIG ===
 var EMAILJS_PUBLIC_KEY = '_qTlu1IWt5NcQ1cFw';
 var EMAILJS_SERVICE_ID = 'service_gkpt91s';
@@ -8101,10 +8203,7 @@ function adminToggleDemoData() {
 }
 
 function adminClearLocalStorage() {
-  if (!confirm('Clear all local storage? This will reset cached settings.\nYour Firebase data will remain intact.')) return;
-  closeAdminPanel();
-  localStorage.clear();
-  location.reload();
+  appConfirm({title:'Clear Local Storage?',message:'This will reset cached settings. Your Firebase data will remain intact.',confirmLabel:'Clear',danger:true,onConfirm:function(){closeAdminPanel();localStorage.clear();location.reload();}});
 }
 
 function adminShowDocs() {
@@ -8138,7 +8237,7 @@ function copyDocsLink() {
 }
 
 function adminFullReset() {
-  if (!confirm('Full reset? This will clear local storage and sign you out.\nYou will need to sign in again.')) return;
+  appConfirm({title:'Full Reset?',message:'This will clear local storage and sign you out. You will need to sign in again.',confirmLabel:'Reset Everything',danger:true,onConfirm:function(){
   closeAdminPanel();
   localStorage.clear();
   if (typeof auth !== 'undefined' && auth.signOut) {
@@ -8146,6 +8245,7 @@ function adminFullReset() {
   } else {
     location.reload();
   }
+  }});
 }
 
 // === ADMIN EMAIL TESTING ===
@@ -8764,13 +8864,13 @@ function confirmPasswordReset() {
 }
 
 function signOutUser() {
-  if (!confirm('Sign out? Your data will stay on this device but won\'t sync until you sign back in.')) return;
-  // Detach listener
+  appConfirm({title:'Sign Out?',message:'Your data will stay on this device but won\'t sync until you sign back in.',confirmLabel:'Sign Out',onConfirm:function(){
   if (_userMeetingsListener) { _userMeetingsListener.off(); _userMeetingsListener = null; }
   demoMode = false;
   auth.signOut()
     .then(() => { showToast('Signed out'); })
     .catch(e => alert('Sign out failed: ' + e.message));
+  }});
 }
 
 function openAccountModal() {
@@ -8873,8 +8973,7 @@ function updateAccountPassword() {
 
 function deleteAccount() {
   if (!currentUser) return;
-  var confirmed = confirm('Delete your account?\n\nThis will permanently delete your account, all meetings, settings, and sobriety data. This cannot be undone.');
-  if (!confirmed) return;
+  appConfirm({title:'Delete Your Account?',message:'This will permanently delete your account, all meetings, settings, and sobriety data. This cannot be undone.',confirmLabel:'Delete Account',danger:true,onConfirm:function(){
   var uid = currentUser.uid;
   var deleteData = db ? db.ref('users/' + uid).remove() : Promise.resolve();
   deleteData.then(function() {
@@ -8889,6 +8988,7 @@ function deleteAccount() {
       showAccountError('Error: ' + err.message);
     }
   });
+  }});
 }
 
 // Start auth listener
@@ -12259,8 +12359,7 @@ function clearMeetingsByType() {
   if (!field || !value) { alert('Please select a category and value.'); return; }
   var count = meetings.filter(function(m) { return m[field] === value; }).length;
   if (count === 0) { alert('No matching meetings found.'); return; }
-  if (!confirm('Remove ' + count + ' meeting(s) where ' + field + ' is "' + value + '"? This cannot be undone.')) return;
-
+  appConfirm({title:'Remove ' + count + ' Meeting' + (count > 1 ? 's' : '') + '?',message:'All meetings where ' + field + ' is "' + value + '" will be removed. This cannot be undone.',confirmLabel:'Remove',danger:true,onConfirm:function(){
   meetings = meetings.filter(function(m) { return m[field] !== value; });
   interested.forEach(function(id) {
     if (!meetings.find(function(m) { return m.id === id; })) interested.delete(id);
@@ -12275,6 +12374,7 @@ function clearMeetingsByType() {
   // Reset the dropdowns
   document.getElementById('clearByTypeField').value = '';
   document.getElementById('clearByTypeValue').innerHTML = '<option value="">Select value...</option>';
+  }});
 }
 
 // === DATA BACKUP EXPORT / IMPORT ===
@@ -12325,8 +12425,7 @@ function importBackupJSON(file) {
       if (!data.version || !data.meetings) {
         alert('Invalid backup file format.'); return;
       }
-      if (!confirm('This will replace your current calendar with ' + data.meetings.length + ' meetings from the backup. Continue?')) return;
-
+      appConfirm({title:'Import Backup?',message:'This will replace your current calendar with ' + data.meetings.length + ' meetings from the backup.',confirmLabel:'Import',onConfirm:function(){
       meetings = data.meetings || [];
       interested = new Set(data.interested || []);
 
@@ -12377,6 +12476,7 @@ function importBackupJSON(file) {
       render();
       closeSettings();
       showToast('Imported ' + meetings.length + ' meetings from backup');
+      }});
     } catch (err) {
       alert('Error reading backup file: ' + err.message);
     }
@@ -12498,7 +12598,7 @@ function closeImportPreview() {
 }
 
 function clearAllMeetingsConfirm() {
-  if (!confirm("Clear all meetings and reload original seed data? This cannot be undone.")) return;
+  appConfirm({title:'Reload Seed Data?',message:'This will clear all meetings and reload original seed data. This cannot be undone.',confirmLabel:'Reload',danger:true,onConfirm:function(){
   meetings = getSeedMeetings();
   interested.clear();
   localStorage.removeItem("recoveryInterested");
@@ -12508,6 +12608,7 @@ function clearAllMeetingsConfirm() {
   updateInterestedCount();
   render();
   closeSettings();
+  }});
 }
 
 function resetProject() {
@@ -12547,7 +12648,7 @@ function resetRestoreDefaults() {
 }
 
 function resetFullRestore() {
-  if (!confirm("Replace everything with the original sample schedule? Custom meetings will be removed.")) return;
+  appConfirm({title:'Restore Sample Data?',message:'This will replace everything with the original sample schedule. Custom meetings will be removed.',confirmLabel:'Restore',danger:true,onConfirm:function(){
   meetings = getSeedMeetings();
   interested.clear();
   localStorage.removeItem("recoveryInterested");
@@ -12559,10 +12660,11 @@ function resetFullRestore() {
   render();
   closeResetModal();
   showToast("Sample data restored");
+  }});
 }
 
 function resetFullProject() {
-  if (!confirm("Remove all meetings? Your calendar will be completely empty. This cannot be undone.")) return;
+  appConfirm({title:'Remove All Meetings?',message:'Your calendar will be completely empty. This cannot be undone.',confirmLabel:'Remove All',danger:true,onConfirm:function(){
   meetings = [];
   interested.clear();
   localStorage.removeItem("recoveryInterested");
@@ -12574,6 +12676,7 @@ function resetFullProject() {
   render();
   closeResetModal();
   showToast("All meetings removed");
+  }});
 }
 
 function showTopBanner(msg) {
@@ -12591,11 +12694,10 @@ function showToast(msg) {
 }
 
 function clearMeetingsAtLocation() {
-  const location = document.getElementById("settingsLocation").value;
-  if (!location) { alert("Please select a location."); return; }
-  if (!confirm(`Remove all meetings at "${location}"? This cannot be undone.`)) return;
-
-  meetings = meetings.filter(m => m.location !== location);
+  const loc = document.getElementById("settingsLocation").value;
+  if (!loc) { alert("Please select a location."); return; }
+  appConfirm({title:'Remove Meetings?',message:'All meetings at "' + loc + '" will be removed. This cannot be undone.',confirmLabel:'Remove',danger:true,onConfirm:function(){
+  meetings = meetings.filter(m => m.location !== loc);
   interested.forEach(id => {
     if (!meetings.find(m => m.id === id)) interested.delete(id);
   });
@@ -12605,6 +12707,7 @@ function clearMeetingsAtLocation() {
   buildChips();
   updateInterestedCount();
   render();
+  }});
 }
 
 // Restore saved headline and personalized name
