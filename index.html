@@ -757,7 +757,9 @@
   .filter-bar {
     background: color-mix(in srgb, var(--ink) 85%, var(--paper));
     padding: 0 0 4px;
-    margin-bottom: 2px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     animation: navFadeIn 0.4s ease 0.2s both;
   }
 
@@ -765,7 +767,8 @@
   .filter-tabs {
     display: flex;
     justify-content: center;
-    padding: 0;
+    gap: 6px;
+    padding: 0 16px;
     background: var(--ink);
     position: relative;
   }
@@ -775,7 +778,7 @@
     font-weight: 700;
     letter-spacing: 1.8px;
     text-transform: uppercase;
-    padding: 14px 24px;
+    padding: 14px 30px;
     border: none;
     background: transparent;
     color: rgba(255,255,255,0.65);
@@ -791,7 +794,6 @@
     border-radius: 10px 10px 0 0;
     margin-top: -4px;
     padding-top: 14px;
-    border-top: 3px solid var(--accent);
   }
 
   /* === Controls row: sliding pill toggles === */
@@ -860,22 +862,26 @@
   .filter-clear-row {
     display: flex;
     justify-content: flex-end;
-    padding: 8px 0 2px;
+    padding: 10px 0 2px;
   }
   .filter-clear-btn {
     font-family: inherit;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 1.8px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--accent);
-    background: none;
-    border: none;
+    color: var(--white);
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 999px;
     cursor: pointer;
-    padding: 6px 4px;
-    transition: color 0.15s;
+    padding: 7px 16px;
+    transition: background 0.2s, border-color 0.2s;
   }
-  .filter-clear-btn:hover { color: var(--white); }
+  .filter-clear-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.5);
+  }
 
   /* === Tab panel wrapper: smooth height transitions === */
   .filter-panel-wrap {
@@ -5593,19 +5599,19 @@
       <hr class="filter-divider">
       <div class="chip-wrap" id="chipsFellowship"></div>
       <div class="filter-clear-row">
-        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear Filters</button>
       </div>
     </div>
     <div class="filter-tab-panel" id="filterTabFormat">
       <div class="chip-wrap" id="chipsFormat" style="padding-top: 14px;"></div>
       <div class="filter-clear-row">
-        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear Filters</button>
       </div>
     </div>
     <div class="filter-tab-panel" id="filterTabLocation">
       <div class="chip-wrap" id="chipsPlace" style="padding-top: 14px;"></div>
       <div class="filter-clear-row">
-        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear</button>
+        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear Filters</button>
       </div>
     </div>
   </div>
