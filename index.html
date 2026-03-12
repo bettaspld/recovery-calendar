@@ -2292,25 +2292,23 @@
     flex: 1;
     min-width: 0;
   }
-  .flm-locate-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    min-width: 44px;
-    background: var(--accent);
-    color: var(--white);
+  .flm-locate-btn { display: none; }
+  .flm-use-location-link {
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: none;
     border: none;
-    border-radius: var(--radius);
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
+    padding: 4px 0 0;
+    text-align: left;
+    transition: opacity 0.15s;
   }
-  .flm-locate-btn:hover { background: var(--accent-dark, #b87a0e); }
-  .flm-locate-btn:active { transform: scale(0.95); }
-  .flm-locate-btn.locating {
-    background: var(--grid-line);
+  .flm-use-location-link:hover { opacity: 0.7; }
+  .flm-use-location-link.locating {
+    color: var(--ink-faint);
     pointer-events: none;
-    animation: locatePulse 1s ease infinite;
   }
   @keyframes locatePulse {
     0%, 100% { opacity: 1; }
@@ -3489,11 +3487,8 @@
     display: inline-flex;
   }
   .nav-dd-arrow {
-    font-size: 7px; margin-left: 2px; vertical-align: middle;
-    transition: transform 0.2s ease;
+    display: none;
   }
-  .nav-dropdown:hover .nav-dd-arrow,
-  .nav-dropdown.open .nav-dd-arrow { transform: rotate(180deg); }
   .nav-dropdown-menu {
     position: absolute;
     top: 100%;
@@ -3548,6 +3543,8 @@
     margin-bottom: 2px;
   }
   .nav-dd-item svg { flex-shrink: 0; color: var(--accent); }
+  .nav-dd-logout { border-top: 1.5px solid var(--grid-line) !important; margin-top: 2px; padding-top: 14px !important; }
+  .nav-dd-logout svg { color: var(--ink-faint); }
   /* Visual Preferences sub-panel */
   .nav-dd-visual-toggle {
     position: relative;
@@ -3890,17 +3887,18 @@
     font-weight: 600;
     letter-spacing: 0.3px;
     color: var(--ink);
-    background: var(--paper);
-    border: none;
+    background: var(--white, #fff);
+    border: 1.5px solid color-mix(in srgb, var(--ink) 12%, transparent);
     border-radius: 10px;
     padding: 14px 18px;
     cursor: pointer;
-    transition: box-shadow 0.2s, transform 0.15s;
+    transition: box-shadow 0.2s, transform 0.15s, border-color 0.2s;
     text-align: left;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   }
   .empty-calendar-action:hover {
-    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    border-color: var(--accent);
   }
   .empty-calendar-action:active {
     transform: scale(0.98);
@@ -3913,7 +3911,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 8px;
-    background: color-mix(in srgb, var(--accent) 12%, var(--paper));
+    background: color-mix(in srgb, var(--accent) 15%, var(--white, #fff));
   }
   .empty-calendar-action .eca-icon svg {
     width: 16px;
@@ -5632,6 +5630,14 @@
           <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M7.5 7.5a2.5 2.5 0 014.5 1.5c0 1.5-2 2-2 3.5"/><circle cx="10" cy="15" r="0.5" fill="currentColor"/></svg>
           How to Use
         </button>
+        <button class="nav-dd-item" onclick="if(confirm('Reset your calendar? This will remove all meetings.'))resetProject(); closeNavMenu(); closeSettingsDropdown()">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 14a8 8 0 1 0 .49-7.54L1 10"/></svg>
+          Reset Calendar
+        </button>
+        <button class="nav-dd-item nav-dd-logout" id="navLogoutItem" onclick="signOutUser(); closeNavMenu(); closeSettingsDropdown()" style="display:none;">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 17H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h3"/><polyline points="11 15 15 10 11 5"/><line x1="15" y1="10" x2="7" y2="10"/></svg>
+          Log Out
+        </button>
       </div>
     </div>
     <span class="nav-text-sep" id="authSep">|</span>
@@ -6486,7 +6492,7 @@
             <div class="about-feature-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M2 2v12h12V2H2zm1 1h10v2H3V3zm0 3h4v3H3V6zm5 0h5v3H8V6zM3 10h4v3H3v-3zm5 0h5v3H8v-3z"/></svg></div>
             <div class="about-feature-text">
               <div class="about-feature-title">Add & Edit Meetings</div>
-              <div class="about-feature-desc">Add your own meetings with full details — name, day, time, fellowship, format, location, address, and notes. Edit or delete anytime with undo support. Reset options let you restore defaults or start fresh.</div>
+              <div class="about-feature-desc">Add your own meetings with full details — name, day, time, fellowship, format, location, address, and notes. Edit or delete anytime with undo support. Reset your calendar at any time from settings.</div>
             </div>
           </div>
 
@@ -7223,7 +7229,7 @@
           <div class="settings-remove-header" onclick="toggleSettingsRemovePanel('removeEverything')">
             <div style="display:flex; align-items:center; gap:8px;">
               <svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 17 6"/><path d="M8 6V4a1 1 0 011-1h2a1 1 0 011 1v2"/><path d="M5 6l1 11a2 2 0 002 2h4a2 2 0 002-2l1-11"/><line x1="9" y1="9" x2="9" y2="15"/><line x1="11" y1="9" x2="11" y2="15"/></svg>
-              <span class="settings-row-label" style="margin:0;">Start Fresh</span>
+              <span class="settings-row-label" style="margin:0;">Reset Calendar</span>
             </div>
             <span class="settings-remove-arrow">&#9662;</span>
           </div>
@@ -7369,10 +7375,8 @@
           <label>City or Zip Code</label>
           <div class="flm-location-row">
             <input type="text" id="flmLocation" placeholder="e.g. Portland, OR or 97201" autocomplete="off">
-            <button type="button" class="flm-locate-btn" id="flmLocateBtn" onclick="useMyLocation()" title="Use my location">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
-            </button>
           </div>
+          <button type="button" class="flm-use-location-link" id="flmLocateBtn" onclick="useMyLocation()">Use my location</button>
         </div>
         <div class="form-group">
           <label>Search Radius</label>
@@ -7742,6 +7746,8 @@ function updateAuthUI(user) {
     if (authSep) authSep.style.display = 'none';
     if (ddLabel) ddLabel.textContent = 'Account Settings';
     if (navAccountItem) navAccountItem.style.display = '';
+    var navLogout = document.getElementById('navLogoutItem');
+    if (navLogout) navLogout.style.display = '';
   } else {
     // Show standalone Sign In button, hide Account Details
     btn.style.display = '';
@@ -7751,6 +7757,8 @@ function updateAuthUI(user) {
     btn.onclick = function() { openAuthModal(); closeNavMenu(); };
     if (ddLabel) ddLabel.textContent = 'Settings';
     if (navAccountItem) navAccountItem.style.display = 'none';
+    var navLogout2 = document.getElementById('navLogoutItem');
+    if (navLogout2) navLogout2.style.display = 'none';
   }
   updateResetButton();
   updateHeroTitle();
@@ -7762,11 +7770,11 @@ function updateResetButton() {
   var resetTitle = document.querySelector('#resetOverlay .modal-header h2');
   if (demoMode) {
     if (settingsResetBtn) settingsResetBtn.textContent = 'Reset Project';
-    if (settingsResetDesc) settingsResetDesc.textContent = 'Restore defaults, reload sample data, or start fresh.';
+    if (settingsResetDesc) settingsResetDesc.textContent = 'Restore defaults or reload sample data.';
     if (resetTitle) resetTitle.textContent = 'Reset Project';
   } else {
     if (settingsResetBtn) settingsResetBtn.textContent = 'Reset Calendar';
-    if (settingsResetDesc) settingsResetDesc.textContent = 'Remove all meetings and start fresh.';
+    if (settingsResetDesc) settingsResetDesc.textContent = 'Remove all meetings and reset your calendar.';
     if (resetTitle) resetTitle.textContent = 'Reset Calendar';
   }
 }
@@ -12041,7 +12049,7 @@ function resetProject() {
   document.getElementById('resetOptSample').style.display = isDemo ? '' : 'none';
   document.getElementById('resetModalDesc').textContent = isDemo
     ? 'Choose how you\'d like to reset your calendar:'
-    : 'This will remove all your meetings and start fresh.';
+    : 'This will remove all your meetings and reset your calendar.';
   document.getElementById('resetOverlay').classList.add('active');
 }
 
