@@ -8511,6 +8511,8 @@ function loadUserDataFromFirebase() {
     _userMeetingsListener = getUserMeetingsRef();
     if (_userMeetingsListener) {
       _userMeetingsListener.on('value', (snapshot) => {
+        // Skip if a local destructive operation just wrote to Firebase
+        if (window._fbWriteInProgress) return;
         const data = snapshot.val();
         if (data && Array.isArray(data)) {
           meetings = data;
@@ -8570,6 +8572,7 @@ function migrateLocalDataToFirebase() {
         _userMeetingsListener = getUserMeetingsRef();
         if (_userMeetingsListener) {
           _userMeetingsListener.on('value', (snapshot) => {
+            if (window._fbWriteInProgress) return;
             const data = snapshot.val();
             if (data && Array.isArray(data)) {
               meetings = data;
@@ -11498,9 +11501,57 @@ function undoDelete() {
 function save() {
   localStorage.setItem("recoveryMeetings", JSON.stringify(meetings));
   if (currentUser && firebaseReady) {
+    window._fbWriteInProgress = true;
     const ref = getUserMeetingsRef();
-    if (ref) ref.set(meetings).catch(e => console.log('Firebase write error:', e));
+    if (ref) ref.set(meetings).then(function() {
+      setTimeout(function() { window._fbWriteInProgress = false; }, 500);
+    }).catch(function(e) {
+      window._fbWriteInProgress = false;
+      console.log('Firebase write error:', e);
+    });
   }
+}
+
+// Destructive save with undo support — backs up meetings before clearing
+var _undoBackup = null;
+var _undoTimer = null;
+function saveWithUndo(toastMsg, undoLabel) {
+  // Store backup before saving the destructive change
+  _undoBackup = { meetings: JSON.parse(JSON.stringify(meetings)), interested: Array.from(interested) };
+  // Clear any existing undo timer
+  if (_undoTimer) clearTimeout(_undoTimer);
+
+  save();
+  saveInterested();
+
+  // Show undo toast
+  var toast = document.getElementById('undoToast');
+  if (toast) {
+    toast.innerHTML = '<span>' + (toastMsg || 'Done') + '</span><button onclick="undoLastAction()">' + (undoLabel || 'Undo') + '</button>';
+    toast.classList.add('visible');
+    _undoTimer = setTimeout(function() {
+      toast.classList.remove('visible');
+      _undoBackup = null;
+      _undoTimer = null;
+    }, 8000);
+  }
+}
+
+function undoLastAction() {
+  if (!_undoBackup) return;
+  meetings = _undoBackup.meetings;
+  interested = new Set(_undoBackup.interested);
+  _undoBackup = null;
+  if (_undoTimer) { clearTimeout(_undoTimer); _undoTimer = null; }
+  save();
+  saveInterested();
+  populateLocationSelect();
+  buildChips();
+  updateInterestedCount();
+  render();
+  var toast = document.getElementById('undoToast');
+  if (toast) toast.classList.remove('visible');
+  showToast('Restored');
 }
 
 // === AI VISION IMAGE PARSING ===
@@ -12360,21 +12411,19 @@ function clearMeetingsByType() {
   if (!field || !value) { alert('Please select a category and value.'); return; }
   var count = meetings.filter(function(m) { return m[field] === value; }).length;
   if (count === 0) { alert('No matching meetings found.'); return; }
-  appConfirm({title:'Remove ' + count + ' Meeting' + (count > 1 ? 's' : '') + '?',message:'All meetings where ' + field + ' is "' + value + '" will be removed. This cannot be undone.',confirmLabel:'Remove',danger:true,onConfirm:function(){
+  appConfirm({title:'Remove ' + count + ' Meeting' + (count > 1 ? 's' : '') + '?',message:'All meetings where ' + field + ' is "' + value + '" will be removed.',confirmLabel:'Remove',danger:true,onConfirm:function(){
+  _undoBackup = { meetings: JSON.parse(JSON.stringify(meetings)), interested: Array.from(interested) };
   meetings = meetings.filter(function(m) { return m[field] !== value; });
   interested.forEach(function(id) {
     if (!meetings.find(function(m) { return m.id === id; })) interested.delete(id);
   });
-  save();
-  saveInterested();
   populateLocationSelect();
   buildChips();
   updateInterestedCount();
   render();
-  showToast('Removed ' + count + ' meeting(s)');
-  // Reset the dropdowns
   document.getElementById('clearByTypeField').value = '';
   document.getElementById('clearByTypeValue').innerHTML = '<option value="">Select value...</option>';
+  saveWithUndo('Removed ' + count + ' meeting(s)', 'Undo');
   }});
 }
 
@@ -12599,16 +12648,17 @@ function closeImportPreview() {
 }
 
 function clearAllMeetingsConfirm() {
-  appConfirm({title:'Reload Seed Data?',message:'This will clear all meetings and reload original seed data. This cannot be undone.',confirmLabel:'Reload',danger:true,onConfirm:function(){
+  appConfirm({title:'Reload Seed Data?',message:'This will clear all meetings and reload original seed data.',confirmLabel:'Reload',danger:true,onConfirm:function(){
+  _undoBackup = { meetings: JSON.parse(JSON.stringify(meetings)), interested: Array.from(interested) };
   meetings = getSeedMeetings();
   interested.clear();
   localStorage.removeItem("recoveryInterested");
-  save();
   populateLocationSelect();
   buildChips();
   updateInterestedCount();
   render();
   closeSettings();
+  saveWithUndo('Seed data reloaded', 'Undo');
   }});
 }
 
@@ -12650,33 +12700,33 @@ function resetRestoreDefaults() {
 
 function resetFullRestore() {
   appConfirm({title:'Restore Sample Data?',message:'This will replace everything with the original sample schedule. Custom meetings will be removed.',confirmLabel:'Restore',danger:true,onConfirm:function(){
+  // Backup before destructive change
+  _undoBackup = { meetings: JSON.parse(JSON.stringify(meetings)), interested: Array.from(interested) };
   meetings = getSeedMeetings();
   interested.clear();
   localStorage.removeItem("recoveryInterested");
-  save();
-  saveInterested();
   populateLocationSelect();
   buildChips();
   updateInterestedCount();
   render();
   closeResetModal();
-  showToast("Sample data restored");
+  saveWithUndo('Sample data restored', 'Undo');
   }});
 }
 
 function resetFullProject() {
-  appConfirm({title:'Remove All Meetings?',message:'Your calendar will be completely empty. This cannot be undone.',confirmLabel:'Remove All',danger:true,onConfirm:function(){
+  appConfirm({title:'Remove All Meetings?',message:'Your calendar will be completely empty.',confirmLabel:'Remove All',danger:true,onConfirm:function(){
+  // Backup before destructive change
+  _undoBackup = { meetings: JSON.parse(JSON.stringify(meetings)), interested: Array.from(interested) };
   meetings = [];
   interested.clear();
   localStorage.removeItem("recoveryInterested");
-  save();
-  saveInterested();
   populateLocationSelect();
   buildChips();
   updateInterestedCount();
   render();
   closeResetModal();
-  showToast("All meetings removed");
+  saveWithUndo('All meetings removed', 'Undo');
   }});
 }
 
@@ -12697,17 +12747,17 @@ function showToast(msg) {
 function clearMeetingsAtLocation() {
   const loc = document.getElementById("settingsLocation").value;
   if (!loc) { alert("Please select a location."); return; }
-  appConfirm({title:'Remove Meetings?',message:'All meetings at "' + loc + '" will be removed. This cannot be undone.',confirmLabel:'Remove',danger:true,onConfirm:function(){
+  appConfirm({title:'Remove Meetings?',message:'All meetings at "' + loc + '" will be removed.',confirmLabel:'Remove',danger:true,onConfirm:function(){
+  _undoBackup = { meetings: JSON.parse(JSON.stringify(meetings)), interested: Array.from(interested) };
   meetings = meetings.filter(m => m.location !== loc);
   interested.forEach(id => {
     if (!meetings.find(m => m.id === id)) interested.delete(id);
   });
-  save();
-  saveInterested();
   populateLocationSelect();
   buildChips();
   updateInterestedCount();
   render();
+  saveWithUndo('Removed meetings at ' + loc, 'Undo');
   }});
 }
 
